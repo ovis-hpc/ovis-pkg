@@ -1,43 +1,117 @@
 #!/bin/bash
 #
-# This works similar to ./all-autogen*.sh script, but it will generate RPMs
-# instead of installing the applications. The resulting RPMs can be found in
-# <project-dir>/$BUILD_DIR/rpm7/RPMS
+# README
 #
-# The RPM installation destination is the $PREFIX
+# This script is meant to be run on a dedicated RPM Build machine. The script
+# will remove existing ovis-lib-*, sosdb-*, ovis-ldms-*, and baler-*
+# installation before building. The script also call `yum` several times to
+# install dependencies needed for the build. The following is the sequence of
+# routines executed by this script:
+#
+# 0. yum remove 'ovis-lib-*' 'sosdb-*' 'ovis-ldms-*' 'baler-*'
+# 1. ovis-lib
+#    - make ovis-lib dist tarball
+#    - rpmbuild ovis-lib
+#    - yum install ovis-lib-* (needed to build ovis-ldms and baler)
+#
+# 2. sosdb
+#    - make sosdb dist tarball
+#    - rpmbuild sosdb
+#    - yum install sosdb (needed to build ovis-ldms and baler)
+#
+# 3. ovis-ldms
+#    - make ovis-ldms dist tarball
+#    - rpmbuild ovis-ldms
+#
+# 4. build baler
+#    - make baler dist tarball
+#    - rpmbuild baler
+#
+# 5. The RPMS can be found in $PWD/rpmbuild/RPMS
+# 6. The SRPMS can be found in $PWD/rpmbuild/SRPMS
 
-BUILD_DIR="build-rpm7"
 OVIS_SRC=$(dirname $PWD)/ovis
-PREFIX=/opt/ovis
-
-WITH_OVIS_LIB="--with-ovis-lib=$OVIS_SRC/lib/$BUILD_DIR/rpm7/BUILDROOT$PREFIX"
-WITH_SOS="--with-sos=$OVIS_SRC/sos/$BUILD_DIR/rpm7/BUILDROOT$PREFIX"
-
-WITH="$WITH_OVIS_LIB $WITH_SOS"
 
 CFLAGS='-g -O3'
 
 # Exit immediately if a command failed
 set -e
 
-RPMS_DEST=$PWD/RPM7
-rm -rf $RPMS_DEST
-mkdir -p $RPMS_DEST
+ARCH=$(uname -m)
 
-SPEC_SRC_DIR=$PWD
+RPMBUILD=$PWD/rpmbuild
+mkdir -p $RPMBUILD/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+
+WITH_OVIS_LIB="--with-ovis-lib=/opt/ovis"
+WITH_SOS="--with-sos=/opt/ovis"
+
+WITH="$WITH_OVIS_LIB $WITH_SOS"
+
+function pkg_name() {
+	case $1 in
+	lib)
+		echo -n "ovis-lib"
+	;;
+	sos)
+		echo -n "sosdb"
+	;;
+	ldms)
+		echo -n "ovis-ldms"
+	;;
+	baler)
+		echo -n "baler"
+	;;
+	*)
+		exit -1
+	;;
+	esac
+}
+
+function spec_name() {
+	echo -n $(pkg_name $1).spec
+}
+
+function yum_group_check_install() {
+	GRP="$1"
+	X=$(yum grouplist installed "$GRP" 2>/dev/null | wc -l)
+	test "$X" -gt 0 || sudo yum groupinstall "$GRP"
+}
+
+function yum_check_install() {
+	for _X in $@; do
+		yum list installed $_X >/dev/null 2>&1 || sudo yum install $_X
+	done
+}
+
+sudo yum remove 'ovis-lib-*' 'sosdb-*' 'ovis-ldms-*' 'baler-*'
+yum_group_check_install "Development Tools"
+yum_check_install \
+	autoconf \
+	automake \
+	swig \
+	python-devel \
+	libtool \
+	libevent-devel \
+	libibverbs-devel \
+	libibmad-devel \
+	libibumad-devel \
+	librdmacm-devel \
+	openssl-devel \
+	libyaml-devel
+
 LIST="lib sos ldms baler"
 for X in $LIST; do
 	echo "----------------------------------"
 	echo "$X"
 	echo "----------------------------------"
 	set -x; # enable command echo
+
+	# First, generate the source tarball
 	pushd ../ovis/$X
 	./autogen.sh
+	BUILD_DIR=$PWD/build-rpm7
 	mkdir -p $BUILD_DIR
-	pushd $BUILD_DIR # We still rely on git-enabled source dir to resolve
-			 # git-SHA for individual package build. Until
-			 # individual ovis subproject build support SHA.txt and
-			 # TAG.txt, we just have to do this.
+	pushd $BUILD_DIR
 	rm -rf * # Making sure that the build is clean
 	../configure $WITH # doesn't need other options here as this is for
 			   # `make dist` only. For the enable/disable
@@ -45,34 +119,37 @@ for X in $LIST; do
 			   # options in their spec files.
 	make dist
 
-	mkdir -p rpm7/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-	ln -f -s ../../automake rpm7/BUILD/automake
-	cp *.tar.gz rpm7/SOURCES
-	SPEC=${X}.rhel7.spec
-	cp $SPEC_SRC_DIR/$SPEC rpm7/SPECS
-	QA_RPATHS=0x0003 ; \
-	export QA_RPATHS ; \
-	rpmbuild --define "_topdir `pwd`/rpm7" \
-		--define "_ovis_src $OVIS_SRC" \
-		--define "_build_dir $BUILD_DIR" \
-		--define "_prefix $PREFIX" \
-		--buildroot `pwd`/rpm7/BUILDROOT \
-		-ba rpm7/SPECS/$SPEC
-
-	mkdir -p rpm7/BUILDROOT
-	pushd rpm7/BUILDROOT
-	for Y in ../RPMS/*/*.rpm; do
-		# Extract RPM contents so that the dependent programs can link
-		# and build.
-		echo "-- Extracting $Y --"
-		rpm2cpio $Y | cpio -idmv
-		mv $Y $RPMS_DEST
-	done
-	popd # rpm7/BUILDROOT
+	cp *.tar.gz $RPMBUILD/SOURCES
 	popd # $BUILD_DIR
 	popd # ../ovis/$X
+
+	SPEC=$(spec_name $X)
+	cp $SPEC $RPMBUILD/SPECS
+	rpmbuild --define "_topdir $RPMBUILD" \
+		-ba $RPMBUILD/SPECS/$SPEC
+
+	case $X in
+	lib)
+		RPM_PTN="ovis-lib"
+	;;
+	sos)
+		RPM_PTN="sosdb"
+	;;
+	*)
+		RPM_PTN=""
+	;;
+	esac
+	if test -n "$RPM_PTN"; then
+		# install ovis-lib and sosdb as build prerequisite of ldms
+		# and baler
+		sudo yum install -y $RPMBUILD/RPMS/$ARCH/${RPM_PTN}-*.rpm
+		#for R in $RPMBUILD/RPMS/$ARCH/${RPM_PTN}-*.rpm; do
+		#	rpm2cpio $R | cpio -dium
+		#done
+	fi
+
 	set +x; # disable command echo so that it won't print the "for ..." command
 	echo "----- DONE -----"
 done
 
-echo "Please see the RPMs in $RPMS_DEST"
+echo "FINISH: Please find RPMS and SRPMS in ./rpmbuild/RPMS and ./rpmbuild/SRPMS respectively"

@@ -53,16 +53,18 @@ Version: 2.3.2
 Release: 1%{?dist}
 Summary: Baler - a lossless, deterministic log processing tool
 
-%define _app_grp Applications/System
-%define _dev_grp Development/System
-
-Group: %{_app_grp}
+Group: Applications/System
 License: GPLv2 or BSD
-URL: http://www.ogc.us
+URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
 
 Requires: ovis-lib-zap >= 1.3.0, ovis-lib-zap-sock >= 1.3.0
-Prefix: %{_prefix}
+
+BuildRequires: libevent-devel
+BuildRequires: ovis-lib-zap-devel
+BuildRequires: sosdb-devel
+
+%define _prefix /opt/ovis
 %define _sysconfdir %{_prefix}/etc
 %define _localstatedir %{_prefix}/var
 %define _sharedstatedir %{_prefix}/var/lib
@@ -84,9 +86,12 @@ Baler - a lossless, deterministic log processing tool.
 	--enable-doc-html \
 	--enable-doc-man \
 	--disable-rpath \
-	--with-ovis-lib=%{_ovis_src}/lib/build-rpm7/rpm7/BUILDROOT/opt/ovis \
-	--with-sos=%{_ovis_src}/sos/build-rpm7/rpm7/BUILDROOT/opt/ovis \
+	--with-ovis-lib=%{_prefix} \
+	--with-sos=%{_prefix} \
 	CFLAGS="-g -O3"
+# disable rpath when librool re-link
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
 make %{?_smp_mflags}
 
 
@@ -135,7 +140,7 @@ rm -rf %{buildroot}
 # baler-devel package
 %package devel
 Summary: Development files for Baler
-Group: %{_grp}
+Group: Development/Libraries
 %description devel
 Development files for Baler
 %files devel
@@ -146,7 +151,7 @@ Development files for Baler
 # baler-bclient package
 %package bclient
 Summary: Baler interactive client for distributed baler
-Group: %{_grp}
+Group: Applications/System
 Version: %{version}
 Requires: baler >= %{version}, PyYAML >= 3.0, python-dateutil
 %description bclient
@@ -161,7 +166,7 @@ distributed baler.
 # baler-doc package
 %package doc
 Summary: Baler documentation
-Group: %{_grp}
+Group: Documentation
 %description doc
 Documetnation for baler package.
 %files doc

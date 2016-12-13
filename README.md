@@ -31,5 +31,6 @@ popd
 # assuming that PWD is ovis-pkg
 cd rpm7
 ./rpm7.sh
-ls RPM7/ # the RPMs are in here.
+ls rpmbuild/RPMS/ # the RPMs are in here.
+ls rpmbuild/SRPMS/ # the SRPMs are in here.
 ```

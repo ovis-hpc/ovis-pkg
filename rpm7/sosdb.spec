@@ -44,14 +44,18 @@ Release: 1%{?dist}
 Obsoletes: SOS
 Summary: Scalable Object Storage
 
-%define _grp Application/Databases
-Group: %{_grp}
+Group: Application/Databases
 License: GPLv2 or BSD
-URL: http://www.ogc.us
+URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
 
 Requires: libyaml >= 0.1.4
-Prefix: %{_prefix}
+
+BuildRequires: swig
+BuildRequires: python-devel
+BuildRequires: libyaml-devel
+
+%define _prefix /opt/ovis
 
 %description
 The Scalable Object Storage (SOS) is a high performance storage engine designed
@@ -69,6 +73,9 @@ to efficiently manage structured data on persistent media.
 		--enable-doc-man \
 		--disable-rpath \
 		CFLAGS='-g -O3'
+# disable rpath when librool re-link
+sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
 make %{?_smp_mflags}
 
 
@@ -92,7 +99,7 @@ rm -rf %{buildroot}
 # sosdb-devel package
 %package devel
 Summary: Development files for sosdb
-Group: %{_grp}
+Group: Development/Libraries
 Obsoletes: SOS-devel
 %description devel
 PLACE HOLDER FOR sos-devel DESCRIPTION
@@ -105,7 +112,7 @@ PLACE HOLDER FOR sos-devel DESCRIPTION
 # sosdb-doc package
 %package doc
 Summary: sosdb documentation
-Group: %{_grp}
+Group: Documentation
 Obsoletes: SOS-doc
 %description doc
 Documetnation for sosdb package.
@@ -121,7 +128,7 @@ Documetnation for sosdb package.
 # sosdb-bwx package
 %package bwx
 Summary: bwx
-Group: %{_grp}
+Group: Application/Databases
 Obsoletes: SOS-bwx
 %description bwx
 sosdb - Blue Water specific package.
@@ -133,7 +140,7 @@ sosdb - Blue Water specific package.
 # sosdb-bwx-devel package
 %package bwx-devel
 Summary: bwx-devel
-Group: %{_grp}
+Group: Development/Libraries
 Obsoletes: SOS-bwx-devel
 %description bwx-devel
 Development files for sosdb-bwx package.

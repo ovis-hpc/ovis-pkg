@@ -7,17 +7,24 @@
 %define zap_version 1.3.1
 
 # Main package
-%define ovis_lib_grp System Environment/Libraries
 Summary: OVIS Common Libraries
 Name: ovis-lib
 Version: 3.3.1
 Release: 1%{?dist}
 License: GPLv2 or BSD
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Source: %{name}-%{version}.tar.gz
-Url: http://www.opengridcomputing.com/
-Prefix: %{_prefix}
+
+BuildRequires: swig
+BuildRequires: python-devel
+BuildRequires: libibverbs-devel
+BuildRequires: librdmacm-devel
+BuildRequires: libevent-devel
+BuildRequires: openssl-devel
+
+Url: https://www.opengridcomputing.com/
+%define _prefix /opt/ovis
 %define _sysconfdir %{_prefix}/etc
 %define _localstatedir %{_prefix}/var
 %define _sharedstatedir %{_prefix}/var/lib
@@ -58,7 +65,7 @@ rm -rf $RPM_BUILD_ROOT
 # coll
 %package coll
 Summary: OVIS collection data structure library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description coll
 This is a library of collection data structure commonly used in OVIS project.
 This library contains an implementation of the following data structure:
@@ -77,7 +84,7 @@ This library contains an implementation of the following data structure:
 # coll-devel
 %package coll-devel
 Summary: Development files for ovis-lib-coll library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description coll-devel
 Development files for ovis-coll library.
 %files coll-devel
@@ -87,7 +94,7 @@ Development files for ovis-coll library.
 # mmalloc
 %package mmalloc
 Summary: OVIS memory allocation library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description mmalloc
 OVIS memory allocation library
 %files mmalloc
@@ -102,7 +109,7 @@ OVIS memory allocation library
 # mmalloc-devel
 %package mmalloc-devel
 Summary: Development files for ovis-lib-mmalloc library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description mmalloc-devel
 Development files for ovis-mmalloc library
 %files mmalloc-devel
@@ -112,7 +119,7 @@ Development files for ovis-mmalloc library
 # auth
 %package auth
 Summary: OVIS authentication library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description auth
 OVIS authentication library
 %files auth
@@ -128,7 +135,7 @@ OVIS authentication library
 # auth-devel
 %package auth-devel
 Summary: Development files for ovis-lib-auth library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description auth-devel
 Development files for ovis-lib-auth library
 %files auth-devel
@@ -138,7 +145,7 @@ Development files for ovis-lib-auth library
 # ctrl
 %package ctrl
 Summary: OVIS CLI control library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description ctrl
 OVIS CLI control utility library
 %files ctrl
@@ -153,7 +160,7 @@ OVIS CLI control utility library
 # ctrl-devel
 %package ctrl-devel
 Summary: Development files for ovis-lib-ctrl library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description ctrl-devel
 Development files for ovis-lib-ctrl library
 %files ctrl-devel
@@ -163,7 +170,7 @@ Development files for ovis-lib-ctrl library
 # event
 %package event
 Summary: OVIS event library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description event
 OVIS event library
 %files event
@@ -178,7 +185,7 @@ OVIS event library
 # event-devel
 %package event-devel
 Summary: Development files for ovis-lib-event library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description event-devel
 Development files for ovis-lib-event library
 %files event-devel
@@ -188,7 +195,7 @@ Development files for ovis-lib-event library
 # util
 %package util
 Summary: OVIS utility library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description util
 OVIS utility library
 %files util
@@ -203,7 +210,7 @@ OVIS utility library
 # util-devel
 %package util-devel
 Summary: Development files for ovis-lib-util library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description util-devel
 Development files for ovis-lib-util library
 %files util-devel
@@ -213,7 +220,7 @@ Development files for ovis-lib-util library
 # zap
 %package zap
 Summary: asynchronous transport abstraction library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 Version: %{zap_version}
 %description zap
 Zap is an asynchronous transport abstraction library for various OVIS
@@ -233,7 +240,7 @@ underlying transports (e.g. socket, rdma (Infiniband or iWarp), and uGNI).
 # zap-devel
 %package zap-devel
 Summary: Development files for ovis-lib-zap library
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 Version: %{zap_version}
 Requires: ovis-lib-zap >= 1.3.0
 %description zap-devel
@@ -245,7 +252,7 @@ Development files for ovis-lib-zap library
 # zap-sock
 %package zap-sock
 Summary: socket transport implementation for zap
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 Version: %{zap_version}
 Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
 %description zap-sock
@@ -256,7 +263,7 @@ socket transport implementation for zap
 
 %package zap-rdma
 Summary: RDMA (Infiniband and iWarp) transport implementation for zap
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 Version: %{zap_version}
 Requires: ovis-lib-zap >= 1.3.0, librdmacm >= 1.0.19, libibverbs >= 1.1.8
 %description zap-rdma
@@ -268,7 +275,7 @@ RDMA (Infiniband and iWarp) transport implementation for zap
 # python
 %package python
 Summary: Python interface for OVIS libraries
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description python
 Python interface for OVIS libraries
 %files python
@@ -277,7 +284,7 @@ Python interface for OVIS libraries
 # ovis-lib-doc package
 %package doc
 Summary: ovis-lib documentation
-Group: %{_grp}
+Group: Documentation
 %description doc
 Documetnation for ovis-lib package.
 %files doc
@@ -287,7 +294,7 @@ Documetnation for ovis-lib package.
 
 %package misc
 Summary: Miscellaneous file in ovis-lib project.
-Group: %{ovis_lib_grp}
+Group: Development/Libraries
 %description misc
 Miscellaneous file in ovis-lib project.
 %files misc
