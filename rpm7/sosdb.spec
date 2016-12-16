@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 3.3.1
+Version: 3.3.0
 Release: 1%{?dist}
 Obsoletes: SOS
 Summary: Scalable Object Storage

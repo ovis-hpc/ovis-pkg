@@ -49,7 +49,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: baler
-Version: 2.3.2
+Version: 2.3.0
 Release: 1%{?dist}
 Summary: Baler - a lossless, deterministic log processing tool
 

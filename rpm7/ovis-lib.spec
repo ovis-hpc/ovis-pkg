@@ -9,7 +9,7 @@
 # Main package
 Summary: OVIS Common Libraries
 Name: ovis-lib
-Version: 3.3.1
+Version: 3.3.0
 Release: 1%{?dist}
 License: GPLv2 or BSD
 Group: Development/Libraries

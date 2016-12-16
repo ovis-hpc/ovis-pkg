@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 3.3.2
+Version: 3.3.0
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Monitoring Service
 
@@ -135,7 +135,7 @@ Documetnation for ldms project.
 %package sampler-generic
 Summary: Generic LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-generic
 %{summary}
 %files sampler-generic
@@ -146,7 +146,7 @@ Version: 3.3.2
 %package sampler-lustre2
 Summary: Lustre2 LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-lustre2
 %{summary}
 %files sampler-lustre2
@@ -158,7 +158,7 @@ Version: 3.3.2
 %package sampler-meminfo
 Summary: Meminfo LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-meminfo
 %{summary}
 %files sampler-meminfo
@@ -169,7 +169,7 @@ Version: 3.3.2
 %package sampler-procdiskstats
 Summary: Procdiskstats LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procdiskstats
 %{summary}
 %files sampler-procdiskstats
@@ -180,7 +180,7 @@ Version: 3.3.2
 %package sampler-procinterrupts
 Summary: procinterrupts LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procinterrupts
 %{summary}
 %files sampler-procinterrupts
@@ -191,7 +191,7 @@ Version: 3.3.2
 %package sampler-procnetdev
 Summary: procnetdev LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procnetdev
 %{summary}
 %files sampler-procnetdev
@@ -202,7 +202,7 @@ Version: 3.3.2
 %package sampler-procnfs
 Summary: procnfs LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procnfs
 %{summary}
 %files sampler-procnfs
@@ -213,7 +213,7 @@ Version: 3.3.2
 %package sampler-procsensors
 Summary: procsensors LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procsensors
 %{summary}
 %files sampler-procsensors
@@ -224,7 +224,7 @@ Version: 3.3.2
 %package sampler-procstat
 Summary: procstat LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procstat
 %{summary}
 %files sampler-procstat
@@ -235,7 +235,7 @@ Version: 3.3.2
 %package sampler-procstatutil
 Summary: procstatutil LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-procstatutil
 %{summary}
 %files sampler-procstatutil
@@ -246,7 +246,7 @@ Version: 3.3.2
 %package sampler-synthetic
 Summary: synthetic LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-synthetic
 %{summary}
 %files sampler-synthetic
@@ -257,7 +257,7 @@ Version: 3.3.2
 %package sampler-sysclassib
 Summary: sysclassib LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-sysclassib
 %{summary}
 %files sampler-sysclassib
@@ -268,12 +268,23 @@ Version: 3.3.2
 %package sampler-vmstat
 Summary: vmstat LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description sampler-vmstat
 %{summary}
 %files sampler-vmstat
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libvmstat.*
+
+# ovis-ldms-sampler-lnet_stats
+%package sampler-lnet_stats
+Summary: Lustre Network Statistics LDMSD Sampler Plugin
+Group: Applications/System
+Version: 3.3.0
+%description sampler-lnet_stats
+%{summary}
+%files sampler-lnet_stats
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/liblnet_stats.*
 
 
 #################
@@ -284,7 +295,7 @@ Version: 3.3.2
 %package store-csv
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description store-csv
 %{summary}
 %files store-csv
@@ -295,7 +306,7 @@ Version: 3.3.2
 %package store-function-csv
 Summary: Function CSV LDMSD Store Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description store-function-csv
 %{summary}
 %files store-function-csv
@@ -306,7 +317,7 @@ Version: 3.3.2
 %package store-sos
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Version: 3.3.2
+Version: 3.3.0
 %description store-sos
 %{summary}
 %files store-sos
