@@ -2,33 +2,13 @@
 #
 # README
 #
-# This script is meant to be run on a dedicated RPM Build machine. The script
-# will remove existing ovis-lib-*, sosdb-*, ovis-ldms-*, and baler-*
-# installation before building. The script also call `yum` several times to
-# install dependencies needed for the build. The following is the sequence of
-# routines executed by this script:
+# The aries libgpcd sampler needs the libgpcd library which is not
+# a module installed on the system.
 #
-# 0. yum remove 'ovis-lib-*' 'sosdb-*' 'ovis-ldms-*' 'baler-*'
-# 1. ovis-lib
-#    - make ovis-lib dist tarball
-#    - rpmbuild ovis-lib
-#    - yum install ovis-lib-* (needed to build ovis-ldms and baler)
+# The format ofthe option is as follows:
+# --with-aries-libgpcd=LIBDIR,INCDIR for aries-mmr
 #
-# 2. sosdb
-#    - make sosdb dist tarball
-#    - rpmbuild sosdb
-#    - yum install sosdb (needed to build ovis-ldms and baler)
-#
-# 3. ovis-ldms
-#    - make ovis-ldms dist tarball
-#    - rpmbuild ovis-ldms
-#
-# 4. build baler
-#    - make baler dist tarball
-#    - rpmbuild baler
-#
-# 5. The RPMS can be found in $PWD/rpmbuild/RPMS
-# 6. The SRPMS can be found in $PWD/rpmbuild/SRPMS
+ARIES_LIBGPCD=/home/totucke/install/opt/gpcd/lib,/home/totucke/install/opt/gpcd/include/gpcdlocal
 
 OVIS_SRC=$(dirname $PWD)/ovis
 
@@ -47,23 +27,16 @@ TMP_ROOT_PREFIX=$TMP_ROOT/opt/ovis
 mkdir -p $TMP_ROOT_PREFIX
 
 WITH_OVIS_LIB="--with-ovis-lib=$TMP_ROOT_PREFIX"
-WITH_SOS="--with-sos=$TMP_ROOT_PREFIX"
 
-WITH="$WITH_OVIS_LIB $WITH_SOS"
+WITH="$WITH_OVIS_LIB $WITH_GPCD_LIB"
 
 function pkg_name() {
 	case $1 in
 	lib)
 		echo -n "ovis-lib"
 	;;
-	sos)
-		echo -n "sosdb"
-	;;
 	ldms)
 		echo -n "ovis-ldms"
-	;;
-	baler)
-		echo -n "baler"
 	;;
 	*)
 		exit -1
@@ -87,23 +60,7 @@ function yum_check_install() {
 	done
 }
 
-# sudo yum remove 'ovis-lib-*' 'sosdb-*' 'ovis-ldms-*' 'baler-*'
-# yum_group_check_install "Development Tools"
-# yum_check_install \
-#	autoconf \
-#	automake \
-#	swig \
-#	python-devel \
-#	libtool \
-#	libevent-devel \
-#	libibverbs-devel \
-#	libibmad-devel \
-#	libibumad-devel \
-#	librdmacm-devel \
-#	openssl-devel \
-#	libyaml-devel
-
-LIST="lib sos ldms baler"
+LIST="lib ldms"
 for X in $LIST; do
 	echo "----------------------------------"
 	echo "$X"
@@ -131,22 +88,22 @@ for X in $LIST; do
 	cp $SPEC $RPMBUILD/SPECS
 	rpmbuild --define "_topdir $RPMBUILD" \
 		--define "_with_ovis_lib $TMP_ROOT_PREFIX" \
-		--define "_with_sos $TMP_ROOT_PREFIX" \
+		--define "_with_aries_libgpcd $ARIES_LIBGPCD" \
+		--define "_with_rca /opt/cray/rca/default" \
+		--define "_with_krca /opt/cray/krca/default" \
+		--define "_with_cray_hss_devel /opt/cray-hss-devel/default" \
 		-ba $RPMBUILD/SPECS/$SPEC
 
 	case $X in
 	lib)
 		RPM_PTN="ovis-lib"
 	;;
-	sos)
-		RPM_PTN="sosdb"
-	;;
 	*)
 		RPM_PTN=""
 	;;
 	esac
 	if test -n "$RPM_PTN"; then
-		# install ovis-lib and sosdb as build prerequisite of ldms
+		# install ovis-lib and as build prerequisite of ldms
 		# and baler
 		# sudo yum install -y $RPMBUILD/RPMS/$ARCH/${RPM_PTN}-*.rpm
 		pushd $TMP_ROOT

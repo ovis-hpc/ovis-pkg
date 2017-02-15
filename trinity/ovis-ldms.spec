@@ -1,28 +1,12 @@
 Name: ovis-ldms
 Version: 3.3.3
 Release: 1%{?dist}
-Summary: LDMS - Lighweight Distributed Monitoring Service
+Summary: LDMS - Lighweight Distributed Metric Service
 
 Group: Applications/System
 License: GPLv2 or BSD
 URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
-
-# Requires: ovis-lib-zap >= 1.3.0
-
-#BuildRequires: ovis-lib-auth-devel
-#BuildRequires: ovis-lib-coll-devel
-#BuildRequires: ovis-lib-ctrl-devel
-#BuildRequires: ovis-lib-mmalloc-devel
-#BuildRequires: ovis-lib-util-devel
-#BuildRequires: ovis-lib-zap-devel
-#BuildRequires: sosdb-devel
-#BuildRequires: swig
-#BuildRequires: python-devel
-#BuildRequires: libevent-devel
-#BuildRequires: libibmad-devel
-#BuildRequires: libibumad-devel
-#BuildRequires: libibverbs-devel
 
 %define _prefix /opt/ovis
 %define _sysconfdir %{_prefix}/etc
@@ -44,22 +28,31 @@ This package provides the LDMS commands and libraries.
 %build
 %configure --enable-etc \
 		--enable-swig \
-		--enable-doc \
-		--enable-doc-html \
-		--enable-doc-man \
-		--enable-test \
 		--enable-ldms-python \
-		--enable-rdma \
+		--enable-ugni \
 		--enable-sysclassib \
-		--enable-sos \
+		--enable-kgnilnd \
+		--enable-lustre \
+		--enable-tsampler \
+		--enable-cray_power_sampler \
+		--enable-cray_system_sampler \
+		--enable-aries-gpcdr \
+		--enable-aries_mmr \
+		--disable-sos \
+		--disable-rdma \
+		--disable-mmap \
+		--disable-readline \
 		--with-ovis-lib=%{_with_ovis_lib} \
-		--with-sos=%{_with_sos} \
+		--with-aries-libgpcd=%{_with_aries_libgpcd} \
+		--with-rca=%{_with_rca} \
+		--with-krca=%{_with_krca} \
+		--with-cray-hss-devel=%{_with_cray_hss_devel} \
 		CFLAGS="-g -O3"
+
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
 make %{?_smp_mflags}
-
 
 %install
 make install DESTDIR=%{buildroot}
@@ -118,10 +111,10 @@ Development files for LDMS
 
 # ovis-ldms-doc package
 %package doc
-Summary: ldms documentation
+Summary: LDMS Documentation
 Group: Documentation
 %description doc
-Documetnation for ldms project.
+Documentation for LDMS subsystem
 %files doc
 %defattr(-,root,root)
 %{_datadir}/doc
@@ -130,6 +123,56 @@ Documetnation for ldms project.
 ###################
 # sampler plugins #
 ###################
+
+# ovis-ldms-sampler-tsampler
+%package sampler-tsampler
+Summary: High Frequency Sampler Plugins
+Group: Applications/System
+Version: 3.3.0
+%description sampler-tsampler
+%{summary}
+%files sampler-tsampler
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libtsampler.*
+%{_libdir}/ovis-ldms/libhfclock.*
+%{_libdir}/ovis-ldms/libtimer_base.*
+
+# ovis-ldms-sampler-aries
+%package sampler-cray-aries
+Summary: Cray Aries Sampler Plugins
+Group: Applications/System
+Version: 3.3.0
+%description sampler-cray-aries
+%{summary}
+%files sampler-cray-aries
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libaries_mmr.*
+%{_libdir}/ovis-ldms/libaries_nic_mmr.*
+%{_libdir}/ovis-ldms/libaries_rtr_mmr.*
+%{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
+
+# ovis-ldms-sampler-cray-power
+%package sampler-cray-power
+Summary: Cray Power Sampler Plugins
+Group: Applications/System
+Version: 3.3.0
+Requires: ovis-ldms-sampler-tsampler >= 3.3.0
+%description sampler-cray-power
+%{summary}
+%files sampler-cray-power
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libcray_power_sampler.*
+
+# ovis-ldms-sampler-kgnilnd
+%package sampler-kgnilnd
+Summary: Cray KGNI LND LDMS Sampler Plugin
+Group: Applications/System
+Version: 3.3.0
+%description sampler-kgnilnd
+%{summary}
+%files sampler-kgnilnd
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libkgnilnd.*
 
 # ovis-ldms-sampler-generic
 %package sampler-generic
@@ -312,16 +355,5 @@ Version: 3.3.0
 %files store-function-csv
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libstore_function_csv.*
-
-# ovis-ldms-store-sos
-%package store-sos
-Summary: CSV LDMSD Store Plugin
-Group: Applications/System
-Version: 3.3.0
-%description store-sos
-%{summary}
-%files store-sos
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libstore_sos.*
 
 %changelog

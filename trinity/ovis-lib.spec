@@ -7,7 +7,7 @@
 %define zap_version 1.3.1
 
 # Main package
-Summary: OVIS Common Libraries
+Summary: OVIS common libraries
 Name: ovis-lib
 Version: 3.3.1
 Release: 1%{?dist}
@@ -17,9 +17,9 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Source: %{name}-%{version}.tar.gz
 
 BuildRequires: swig
-BuildRequires: python-devel
-BuildRequires: libibverbs-devel
-BuildRequires: librdmacm-devel
+# BuildRequires: python-devel
+# BuildRequires: libibverbs-devel
+# BuildRequires: librdmacm-devel
 BuildRequires: libevent-devel
 BuildRequires: openssl-devel
 
@@ -36,14 +36,9 @@ This package provides common OVIS libraries.
 %setup -q
 
 %build
-%configure --enable-swig \
-		--enable-etc \
-		--enable-doc \
-		--enable-doc-html \
-		--enable-doc-man \
-		--enable-test \
-		--enable-zaptest \
-		--enable-rdma \
+%configure --enable-etc \
+		--enable-ugni \
+		--disable-rdma \
 		--enable-etc \
 		--disable-rpath \
 		CFLAGS='-g -O3'
@@ -64,11 +59,11 @@ rm -rf $RPM_BUILD_ROOT
 
 # coll
 %package coll
-Summary: OVIS collection data structure library
+Summary: OVIS API for managing collections of objects
 Group: Development/Libraries
 %description coll
-This is a library of collection data structure commonly used in OVIS project.
-This library contains an implementation of the following data structure:
+A library of API for managing collections of objects that includes
+the following:
 - Red-Black Tree
 - String Hash Table
 %files coll
@@ -219,18 +214,15 @@ Development files for ovis-lib-util library
 
 # zap
 %package zap
-Summary: asynchronous transport abstraction library
+Summary: Transport Independent User-mode RDMA API
 Group: Development/Libraries
 Version: %{zap_version}
 %description zap
-Zap is an asynchronous transport abstraction library for various OVIS
-applications. It eases the network programming part in application development,
-so that the application doesn't have to pay much attention to the real
-underlying transports (e.g. socket, rdma (Infiniband or iWarp), and uGNI).
+Zap is a Transport Independent User-mode RDMA API
 %files zap
 %defattr(-,root,root)
 %{_libdir}/libzap.*
-%{_sbindir}/zap_test*
+# %{_sbindir}/zap_test*
 
 %post zap
 /sbin/ldconfig
@@ -251,46 +243,27 @@ Development files for ovis-lib-zap library
 
 # zap-sock
 %package zap-sock
-Summary: socket transport implementation for zap
+Summary: Socket transport implementation for Zap
 Group: Development/Libraries
 Version: %{zap_version}
 Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
 %description zap-sock
-socket transport implementation for zap
+Socket transport implementation for Zap
 %files zap-sock
 %defattr(-,root,root)
 %{_libdir}/ovis-lib/libzap_sock.*
 
-%package zap-rdma
-Summary: RDMA (Infiniband and iWarp) transport implementation for zap
+# zap-ugni
+%package zap-ugni
+Summary: uGNI transport implementation for Zap
 Group: Development/Libraries
 Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0, librdmacm >= 1.0.19, libibverbs >= 1.1.8
-%description zap-rdma
-RDMA (Infiniband and iWarp) transport implementation for zap
-%files zap-rdma
+Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
+%description zap-ugni
+uGNI transport implementation for Zap
+%files zap-ugni
 %defattr(-,root,root)
-%{_libdir}/ovis-lib/libzap_rdma.*
-
-# python
-%package python
-Summary: Python interface for OVIS libraries
-Group: Development/Libraries
-%description python
-Python interface for OVIS libraries
-%files python
-%{_prefix}/lib*/python*/site-packages/ovis_lib/
-
-# ovis-lib-doc package
-%package doc
-Summary: ovis-lib documentation
-Group: Documentation
-%description doc
-Documetnation for ovis-lib package.
-%files doc
-%defattr(-,root,root)
-%{_datadir}/doc
-
+%{_libdir}/ovis-lib/libzap_ugni.*
 
 %package misc
 Summary: Miscellaneous file in ovis-lib project.
