@@ -48,18 +48,6 @@ function spec_name() {
 	echo -n $(pkg_name $1).spec
 }
 
-function yum_group_check_install() {
-	GRP="$1"
-	X=$(yum grouplist installed "$GRP" 2>/dev/null | wc -l)
-	test "$X" -gt 0 || sudo yum groupinstall "$GRP"
-}
-
-function yum_check_install() {
-	for _X in $@; do
-		yum list installed $_X >/dev/null 2>&1 || sudo yum install $_X
-	done
-}
-
 LIST="lib ldms"
 for X in $LIST; do
 	echo "----------------------------------"
