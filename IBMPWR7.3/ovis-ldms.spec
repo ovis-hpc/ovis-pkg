@@ -1,6 +1,6 @@
 Name: ovis-ldms
-Version: 3.4.2
-Requires: ovis-lib-mmalloc >= 3.4.2, ovis-lib-ctrl >= 3.4.2, ovis-lib-coll >= 3.4.2
+Version: 3.4.4
+Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
 
@@ -301,7 +301,7 @@ Version: %{version}
 %package store-csv
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Requires: ovis-ldms-store-csv-common >= 3.4.2
+Requires: ovis-ldms-store-csv-common >= %{version}
 Version: %{version}
 %description store-csv
 %{summary}
@@ -314,7 +314,7 @@ Version: %{version}
 Summary: LDMSD Function CSV Store Plugin
 Group: Applications/System
 Version: %{version}
-Requires: ovis-ldms-store-csv-common >= 3.4.2
+Requires: ovis-ldms-store-csv-common >= %{version}
 %description store-function-csv
 %{summary}
 %files store-function-csv
@@ -325,7 +325,7 @@ Requires: ovis-ldms-store-csv-common >= 3.4.2
 %package store-sos
 Summary: LDMSD SOS Store Plugin
 Group: Applications/System
-Requires: sosdb >= 3.4.2
+Requires: sosdb >= %{version}
 Version: %{version}
 %description store-sos
 %{summary}

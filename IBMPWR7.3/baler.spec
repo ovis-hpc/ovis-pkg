@@ -49,8 +49,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: baler
-Version: 3.4.2
-Requires: ovis-lib-zap >= 3.4.2, ovis-lib-zap-sock >= 3.4.2, sosdb-devel >= 3.4.2
+Version: 3.4.4
+Requires: ovis-lib-zap >= %{version}, ovis-lib-zap-sock >= %{version}, sosdb-devel >= %{version}
 Release: 1%{?dist}
 Summary: Baler - a lossless, deterministic log processing tool
 Group: Applications/System

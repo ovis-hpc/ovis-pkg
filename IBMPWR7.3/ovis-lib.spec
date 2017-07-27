@@ -4,12 +4,11 @@
 #%-define _topdir %(echo $PWD)/rpm
 #%-define _unpackaged_files_terminate_build 0
 %define _missing_doc_files_terminate_build 0
-%define zap_version 3.4.2
 
 # Main package
 Summary: OVIS common libraries
 Name: ovis-lib
-Version: 3.4.2
+Version: 3.4.4
 Release: 1%{?dist}
 License: GPLv2 or BSD
 Group: Development/Libraries
@@ -142,7 +141,7 @@ Development files for ovis-lib-auth library
 
 # ctrl
 %package ctrl
-Requires: ovis-lib-util >= 3.4.2
+Requires: ovis-lib-util >= %{version}
 Summary: OVIS CLI control library
 Group: Development/Libraries
 %description ctrl
@@ -221,7 +220,7 @@ Development files for ovis-lib-util library
 %package zap
 Summary: Transport Independent User-mode RDMA API
 Group: Development/Libraries
-Version: %{zap_version}
+Version: %{version}
 %description zap
 Zap is a Transport Independent User-mode RDMA API
 %files zap
@@ -238,8 +237,8 @@ Zap is a Transport Independent User-mode RDMA API
 %package zap-devel
 Summary: Development files for ovis-lib-zap library
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}
 %description zap-devel
 Development files for ovis-lib-zap library
 %files zap-devel
@@ -250,8 +249,8 @@ Development files for ovis-lib-zap library
 %package zap-sock
 Summary: Socket transport implementation for Zap
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll, libevent >= 2.0.21
 %description zap-sock
 Socket transport implementation for Zap
 %files zap-sock
@@ -262,8 +261,8 @@ Socket transport implementation for Zap
 %package zap-rdma
 Summary: RDMA transport implementation for Zap
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll, libevent >= 2.0.21
 %description zap-rdma
 RDMA transport implementation for Zap
 %files zap-rdma
