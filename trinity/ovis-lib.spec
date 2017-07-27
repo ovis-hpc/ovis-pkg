@@ -4,12 +4,11 @@
 #%-define _topdir %(echo $PWD)/rpm
 #%-define _unpackaged_files_terminate_build 0
 %define _missing_doc_files_terminate_build 0
-%define zap_version 1.3.1
 
 # Main package
 Summary: OVIS common libraries
 Name: ovis-lib
-Version: 3.3.1
+Version: 3.4.4
 Release: 1%{?dist}
 License: GPLv2 or BSD
 Group: Development/Libraries
@@ -17,7 +16,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Source: %{name}-%{version}.tar.gz
 
 BuildRequires: swig
-# BuildRequires: python-devel
+BuildRequires: python-devel
 # BuildRequires: libibverbs-devel
 # BuildRequires: librdmacm-devel
 BuildRequires: libevent-devel
@@ -37,8 +36,9 @@ This package provides common OVIS libraries.
 
 %build
 %configure --enable-etc \
-		--enable-ugni \
-		--disable-rdma \
+                --enable-swig \
+ 		--enable-ugni \
+		--enable-rdma \
 		--enable-etc \
 		--disable-rpath \
 		CFLAGS='-g -O3'
@@ -53,6 +53,9 @@ rm -f $RPM_BUILD_ROOT%{_bindir}/test_big_dstring
 rm -f $RPM_BUILD_ROOT%{_bindir}/test_dstring
 rm -f $RPM_BUILD_ROOT%{_bindir}/test_rman
 rm -f $RPM_BUILD_ROOT%{_bindir}/test_olog
+rm -f $RPM_BUILD_ROOT%{_bindir}/test_notification
+rm -f $RPM_BUILD_ROOT%{_bindir}/test_util
+
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -139,6 +142,7 @@ Development files for ovis-lib-auth library
 
 # ctrl
 %package ctrl
+Requires: ovis-lib-util >= %{version}
 Summary: OVIS CLI control library
 Group: Development/Libraries
 %description ctrl
@@ -216,7 +220,7 @@ Development files for ovis-lib-util library
 %package zap
 Summary: Transport Independent User-mode RDMA API
 Group: Development/Libraries
-Version: %{zap_version}
+Version: %{version}
 %description zap
 Zap is a Transport Independent User-mode RDMA API
 %files zap
@@ -233,8 +237,8 @@ Zap is a Transport Independent User-mode RDMA API
 %package zap-devel
 Summary: Development files for ovis-lib-zap library
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0
+Version: %{version}
+Requires: ovis-lib-zap >= %{version} 
 %description zap-devel
 Development files for ovis-lib-zap library
 %files zap-devel
@@ -245,25 +249,48 @@ Development files for ovis-lib-zap library
 %package zap-sock
 Summary: Socket transport implementation for Zap
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll, libevent >= 2.0.21
 %description zap-sock
 Socket transport implementation for Zap
 %files zap-sock
 %defattr(-,root,root)
 %{_libdir}/ovis-lib/libzap_sock.*
 
+# zap-rdma
+%package zap-rdma
+Summary: RDMA transport implementation for Zap
+Group: Development/Libraries
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll, libevent >= 2.0.21
+%description zap-rdma
+RDMA transport implementation for Zap
+%files zap-rdma
+%defattr(-,root,root)
+%{_libdir}/ovis-lib/libzap_rdma.*
+
 # zap-ugni
 %package zap-ugni
 Summary: uGNI transport implementation for Zap
 Group: Development/Libraries
-Version: %{zap_version}
-Requires: ovis-lib-zap >= 1.3.0, ovis-lib-coll, libevent >= 2.0.21
+Version: %{version}
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll, libevent >= 2.0.21
 %description zap-ugni
 uGNI transport implementation for Zap
 %files zap-ugni
 %defattr(-,root,root)
 %{_libdir}/ovis-lib/libzap_ugni.*
+
+# python
+%package python
+Summary: Python API for ovis_lib services
+Group: Development/Libraries
+Version: %{version}
+%description python
+Python API for ovis_lib services
+%files python
+%defattr(-,root,root)
+%{_prefix}/lib*/python*/site-packages/ovis_lib/*
 
 %package misc
 Summary: Miscellaneous file in ovis-lib project.
@@ -275,7 +302,6 @@ Miscellaneous file in ovis-lib project.
 %{_includedir}/ovis-lib-config.h
 %{_bindir}/lib-pedigree
 %{_sysconfdir}/
-# These are the files that we don't care
 %exclude %{_includedir}/ovis-test/
 
 %posttrans misc

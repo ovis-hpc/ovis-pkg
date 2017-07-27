@@ -1,5 +1,6 @@
 Name: ovis-ldms
-Version: 3.3.3
+Version: 3.4.4
+Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
 
@@ -29,19 +30,23 @@ This package provides the LDMS commands and libraries.
 %configure --enable-etc \
 		--enable-swig \
 		--enable-ldms-python \
-		--enable-ugni \
-		--enable-sysclassib \
+                --enable-ugni \
 		--enable-kgnilnd \
+                --enable-doc \
+                --enable-doc-html \
+                --enable-doc-man \
+		--enable-sysclassib \
 		--enable-lustre \
 		--enable-tsampler \
 		--enable-cray_power_sampler \
 		--enable-cray_system_sampler \
 		--enable-aries-gpcdr \
 		--enable-aries_mmr \
-		--disable-sos \
-		--disable-rdma \
+		--enable-sos \
+		--enable-rdma \
 		--disable-mmap \
 		--disable-readline \
+		--with-sos=%{_with_sos} \
 		--with-ovis-lib=%{_with_ovis_lib} \
 		--with-aries-libgpcd=%{_with_aries_libgpcd} \
 		--with-rca=%{_with_rca} \
@@ -128,7 +133,7 @@ Documentation for LDMS subsystem
 %package sampler-tsampler
 Summary: High Frequency Sampler Plugins
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-tsampler
 %{summary}
 %files sampler-tsampler
@@ -141,7 +146,7 @@ Version: 3.3.0
 %package sampler-cray-aries
 Summary: Cray Aries Sampler Plugins
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-cray-aries
 %{summary}
 %files sampler-cray-aries
@@ -155,8 +160,8 @@ Version: 3.3.0
 %package sampler-cray-power
 Summary: Cray Power Sampler Plugins
 Group: Applications/System
-Version: 3.3.0
-Requires: ovis-ldms-sampler-tsampler >= 3.3.0
+Version: %{version}
+Requires: ovis-ldms-sampler-tsampler >= %{version}
 %description sampler-cray-power
 %{summary}
 %files sampler-cray-power
@@ -167,7 +172,7 @@ Requires: ovis-ldms-sampler-tsampler >= 3.3.0
 %package sampler-kgnilnd
 Summary: Cray KGNI LND LDMS Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-kgnilnd
 %{summary}
 %files sampler-kgnilnd
@@ -178,7 +183,7 @@ Version: 3.3.0
 %package sampler-generic
 Summary: Generic LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-generic
 %{summary}
 %files sampler-generic
@@ -189,7 +194,7 @@ Version: 3.3.0
 %package sampler-lustre2
 Summary: Lustre2 LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-lustre2
 %{summary}
 %files sampler-lustre2
@@ -201,7 +206,7 @@ Version: 3.3.0
 %package sampler-meminfo
 Summary: Meminfo LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-meminfo
 %{summary}
 %files sampler-meminfo
@@ -212,7 +217,7 @@ Version: 3.3.0
 %package sampler-procdiskstats
 Summary: Procdiskstats LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procdiskstats
 %{summary}
 %files sampler-procdiskstats
@@ -223,7 +228,7 @@ Version: 3.3.0
 %package sampler-procinterrupts
 Summary: procinterrupts LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procinterrupts
 %{summary}
 %files sampler-procinterrupts
@@ -234,7 +239,7 @@ Version: 3.3.0
 %package sampler-procnetdev
 Summary: procnetdev LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procnetdev
 %{summary}
 %files sampler-procnetdev
@@ -245,7 +250,7 @@ Version: 3.3.0
 %package sampler-procnfs
 Summary: procnfs LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procnfs
 %{summary}
 %files sampler-procnfs
@@ -256,7 +261,7 @@ Version: 3.3.0
 %package sampler-procsensors
 Summary: procsensors LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procsensors
 %{summary}
 %files sampler-procsensors
@@ -267,29 +272,18 @@ Version: 3.3.0
 %package sampler-procstat
 Summary: procstat LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-procstat
 %{summary}
 %files sampler-procstat
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libprocstat.*
 
-# ovis-ldms-sampler-procstatutil
-%package sampler-procstatutil
-Summary: procstatutil LDMSD Sampler Plugin
-Group: Applications/System
-Version: 3.3.0
-%description sampler-procstatutil
-%{summary}
-%files sampler-procstatutil
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libprocstatutil.*
-
 # ovis-ldms-sampler-synthetic
 %package sampler-synthetic
 Summary: synthetic LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-synthetic
 %{summary}
 %files sampler-synthetic
@@ -300,7 +294,7 @@ Version: 3.3.0
 %package sampler-sysclassib
 Summary: sysclassib LDMSD Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-sysclassib
 %{summary}
 %files sampler-sysclassib
@@ -309,36 +303,70 @@ Version: 3.3.0
 
 # ovis-ldms-sampler-vmstat
 %package sampler-vmstat
-Summary: vmstat LDMSD Sampler Plugin
+Summary: vmstat LDMSD Vmstat Sampler Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
 %description sampler-vmstat
 %{summary}
 %files sampler-vmstat
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libvmstat.*
 
+# ovis-ldms-sampler-all
+%package sampler-all
+Summary: all LDMSD All Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-all
+%{summary}
+%files sampler-all
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/liball_example.*
+
+# ovis-ldms-sampler-edac
+%package sampler-edac
+Summary: edac LDMSD EDAC Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-edac
+%{summary}
+%files sampler-edac
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libedac.*
+
 # ovis-ldms-sampler-lnet_stats
-#%package sampler-lnet_stats
-#Summary: Lustre Network Statistics LDMSD Sampler Plugin
-#Group: Applications/System
-#Version: 3.3.0
-#%description sampler-lnet_stats
-#%{summary}
-#%files sampler-lnet_stats
-#%defattr(-,root,root)
-#%{_libdir}/ovis-ldms/liblnet_stats.*
+%package sampler-lnet_stats
+Summary: Lustre Network Statistics LDMSD Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-lnet_stats
+%{summary}
+%files sampler-lnet_stats
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/liblnet_stats.*
 
 
 #################
 # store plugins #
 #################
 
+# ovis-ldms-store-csv-common
+%package store-csv-common
+Summary: CSV LDMSD Store Plugin Common Library
+Group: Applications/System
+Version: %{version}
+%description store-csv-common
+%{summary}
+%files store-csv-common
+%defattr(-,root,root)
+%{_libdir}/libldms_store_csv_common.*
+
 # ovis-ldms-store-csv
 %package store-csv
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Version: 3.3.0
+Requires: ovis-ldms-store-csv-common >= %{version}
+Version: %{version}
 %description store-csv
 %{summary}
 %files store-csv
@@ -347,13 +375,26 @@ Version: 3.3.0
 
 # ovis-ldms-store-function-csv
 %package store-function-csv
-Summary: Function CSV LDMSD Store Plugin
+Summary: LDMSD Function CSV Store Plugin
 Group: Applications/System
-Version: 3.3.0
+Version: %{version}
+Requires: ovis-ldms-store-csv-common >= %{version}
 %description store-function-csv
 %{summary}
 %files store-function-csv
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libstore_function_csv.*
+
+# ovis-ldms-store-sos
+%package store-sos
+Summary: LDMSD SOS Store Plugin
+Group: Applications/System
+Requires: sosdb >= %{version}
+Version: %{version}
+%description store-sos
+%{summary}
+%files store-sos
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libstore_sos.*
 
 %changelog
