@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 3.4.4
+Version: 4.0.0
 Release: 1%{?dist}
 Summary: Scalable Object Storage
 
@@ -89,7 +89,6 @@ rm -rf %{buildroot}
 %{_libdir}/libkey_*
 %{_libdir}/libods.*
 %{_libdir}/libsos.*
-%{_prefix}/lib*/python*/site-packages/sosdb/
 
 # sosdb-devel package
 %package devel

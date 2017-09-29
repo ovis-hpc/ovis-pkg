@@ -8,9 +8,10 @@
 # The format ofthe option is as follows:
 # --with-aries-libgpcd=LIBDIR,INCDIR for aries-mmr
 #
-module load python
+# module load python
 module swap PrgEnv-intel PrgEnv-gnu
-ARIES_LIBGPCD=$(pwd)/gpcd/lib,$(pwd)/gpcd/include/gpcdlocal
+module load python/2.7-anaconda-4.1.1
+ARIES_LIBGPCD=/opt/cray/gni/default/lib64,/opt/cray/gni/default/include/gpcd
 PLATFORM=TRINITY
 OVIS_SRC=$(dirname $PWD)/ovis
 
@@ -33,14 +34,12 @@ mkdir -p $TMP_ROOT_PREFIX
 
 WITH_OVIS_LIB="--with-ovis-lib=$TMP_ROOT_PREFIX"
 WITH_SOS="--with-sos=$TMP_ROOT_PREFIX"
+WITH_SLURM="--with-slurm=/opt/slurm"
 
-WITH="$WITH_OVIS_LIB $WITH_SOS"
+WITH="$WITH_OVIS_LIB $WITH_SOS $WITH_SLURM"
 
 function pkg_name() {
 	case $1 in
-	baler)
-		echo -n "baler"
-	;;
 	lib)
 		echo -n "ovis-lib"
 	;;
@@ -60,7 +59,7 @@ function spec_name() {
 	echo -n $(pkg_name $1).spec
 }
 
-LIST="sos ovis/lib ovis/ldms ovis/baler"
+LIST="sos ovis/lib ovis/ldms"
 for X in $LIST; do
 	echo "----------------------------------"
 	echo "$X"
@@ -90,6 +89,7 @@ for X in $LIST; do
 	cp $SPEC $RPMBUILD/SPECS
 	rpmbuild --define "_topdir $RPMBUILD" \
 		--define "_with_ovis_lib $TMP_ROOT_PREFIX" \
+		--define "_with_slurm /opt/slurm" \
 		--define "_with_sos $TMP_ROOT_PREFIX" \
 		--define "_with_aries_libgpcd $ARIES_LIBGPCD" \
 		--define "_with_rca /opt/cray/rca/default" \
@@ -110,7 +110,6 @@ for X in $LIST; do
 	esac
 	if test -n "$RPM_PTN"; then
 		# install ovis-lib and sosdb as build prerequisite of ldms
-		# and baler
 		pushd $TMP_ROOT
 		for R in $RPMBUILD/RPMS/$ARCH/${RPM_PTN}-*.rpm; do
 			rpm2cpio $R | cpio -dium

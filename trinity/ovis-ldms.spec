@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 3.4.4
+Version: 4.0.0
 Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
@@ -25,7 +25,6 @@ This package provides the LDMS commands and libraries.
 %prep
 %setup -q
 
-
 %build
 %configure --enable-etc \
 		--enable-swig \
@@ -40,12 +39,17 @@ This package provides the LDMS commands and libraries.
 		--enable-tsampler \
 		--enable-cray_power_sampler \
 		--enable-cray_system_sampler \
+		--disable-gpcdlocal \
 		--enable-aries-gpcdr \
 		--enable-aries_mmr \
+		--enable-aries_linkstatus \
+		--enable-jobinfo \
+		--enable-jobinfo-slurm \
 		--enable-sos \
 		--enable-rdma \
 		--disable-mmap \
 		--disable-readline \
+		--with-slurm=%{_with_slurm} \
 		--with-sos=%{_with_sos} \
 		--with-ovis-lib=%{_with_ovis_lib} \
 		--with-aries-libgpcd=%{_with_aries_libgpcd} \
@@ -69,28 +73,50 @@ rm -rf %{buildroot}
 
 # files for main package
 %files
-%{_bindir}
+%{_bindir}/envldms.sh
+%{_bindir}/ldms_ban.sh
+%{_bindir}/ldms-meminfo.sh
+%{_bindir}/ldms-pedigree
+%{_bindir}/ldms_plugins_list.sh
+%{_bindir}/ldms-py-edac_test.sh
+%{_bindir}/ldms-py-fptrans_test.sh
+%{_bindir}/ldms-py-subset_test.sh
+%{_bindir}/ldms-py-syslog.sh
+%{_bindir}/ldms-py-rename.sh
+%{_bindir}/ldms-py-varset.sh
 %{_sbindir}
 %{_libdir}/libldms.*
-%{_prefix}/lib*/python*
 %{_datadir}/doc/%{name}-%{version}/AUTHORS
 %{_datadir}/doc/%{name}-%{version}/COPYING
 %{_datadir}/doc/%{name}-%{version}/ChangeLog
 %{_datadir}/doc/%{name}-%{version}/README
 %config %{_sysconfdir}/ldms/*
 %{_sysconfdir}/systemd
-#%exclude %{_sysconfdir}/init.d
-#%exclude %{_sysconfdir}/ovis
 %exclude %{_libdir}/ovis-ldms-configvars.sh
 %exclude %{_libdir}/ovis-ldms/libstore_flatfile.*
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
 %exclude %{_libdir}/ovis-ldms/libclock.*
+%exclude %{_libdir}/ovis-ldms/libvariable.*
 
 %posttrans
-/sbin/ldconfig
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.aggregator.service %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.sampler.service %{_systemdir}/ldmsd.sampler.service
 /usr/bin/systemctl daemon-reload
+
+%post
+/bin/rm -f /etc/profile.d/ovis.sh
+echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
+echo export LDMSD_PLUGIN_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+echo export ZAP_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+echo export PYTHONPATH=%{_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
+/bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
+/bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir} > %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/ln -fs %{_sysconfdir}/ldms/ldms-ldd.conf /etc/ld.so.conf.d/ldms-ldd.conf
+/sbin/ldconfig
 
 %preun
 /usr/bin/systemctl stop ldmsd.aggregator.service
@@ -102,6 +128,16 @@ rm -rf %{buildroot}
 /usr/bin/systemctl daemon-reload
 /sbin/ldconfig
 
+# ovis-ldms-python package
+%package python
+Summary: Python tools and interfaces package
+Group: Development/Libraries
+%description python
+Python tools and evelopment interfaces
+%files python
+%defattr(-,root,root)
+%{_bindir}/ldmsd_controller
+%{_prefix}/lib*/python*
 
 # ovis-ldms-devel package
 %package devel
@@ -129,6 +165,18 @@ Documentation for LDMS subsystem
 # sampler plugins #
 ###################
 
+# ovis-ldms-sampler-jobinfo
+%package sampler-jobinfo
+Summary: Job Information Sampler
+Group: Applications/System
+Version: %{version}
+%description sampler-jobinfo
+%{summary}
+%files sampler-jobinfo
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libjobinfo.*
+%{_libdir}/ovis-ldms/libjobinfo_slurm.*
+
 # ovis-ldms-sampler-tsampler
 %package sampler-tsampler
 Summary: High Frequency Sampler Plugins
@@ -142,6 +190,17 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libhfclock.*
 %{_libdir}/ovis-ldms/libtimer_base.*
 
+# ovis-ldms-sampler-cray-dvs
+%package sampler-cray-dvs
+Summary: Cray DVS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-cray-dvs
+%{summary}
+%files sampler-cray-dvs
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libcray_dvs_sampler.*
+
 # ovis-ldms-sampler-aries
 %package sampler-cray-aries
 Summary: Cray Aries Sampler Plugins
@@ -151,6 +210,7 @@ Version: %{version}
 %{summary}
 %files sampler-cray-aries
 %defattr(-,root,root)
+%{_libdir}/ovis-ldms/libaries_linkstatus.*
 %{_libdir}/ovis-ldms/libaries_mmr.*
 %{_libdir}/ovis-ldms/libaries_nic_mmr.*
 %{_libdir}/ovis-ldms/libaries_rtr_mmr.*

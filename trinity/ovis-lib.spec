@@ -8,7 +8,7 @@
 # Main package
 Summary: OVIS common libraries
 Name: ovis-lib
-Version: 3.4.4
+Version: 4.0.0
 Release: 1%{?dist}
 License: GPLv2 or BSD
 Group: Development/Libraries
@@ -200,6 +200,8 @@ OVIS utility library
 %files util
 %defattr(-,root,root)
 %{_libdir}/libovis_util*
+%{_libdir}/libjson_parser*
+
 
 %post util
 /sbin/ldconfig
@@ -215,6 +217,7 @@ Development files for ovis-lib-util library
 %files util-devel
 %defattr(-,root,root)
 %{_includedir}/ovis_util/
+%{_includedir}/json_parser/json.h
 
 # zap
 %package zap
