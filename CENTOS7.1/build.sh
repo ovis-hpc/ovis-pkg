@@ -22,8 +22,8 @@ mkdir -p $TMP_ROOT_PREFIX
 
 WITH_OVIS_LIB="--with-ovis-lib=$TMP_ROOT_PREFIX"
 WITH_SOS="--with-sos=$TMP_ROOT_PREFIX"
-
-WITH="$WITH_OVIS_LIB $WITH_SOS --enable-swig"
+WITH_SLURM="--with-slurm=/opt/slurm --enable-jobinfo-slurm"
+WITH="$WITH_OVIS_LIB $WITH_SOS $WITH_SLURM --enable-doc --enable-swig"
 
 function pkg_name() {
 	case $1 in
@@ -49,7 +49,7 @@ function spec_name() {
 	echo -n $(pkg_name $1).spec
 }
 
-LIST="sos ovis/lib ovis/ldms ovis/baler"
+LIST="sos baler ovis/lib ovis/ldms"
 for X in $LIST; do
 	echo "----------------------------------"
 	echo "$X"

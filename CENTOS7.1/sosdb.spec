@@ -39,7 +39,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 3.4.2
+Version: 4.0.0
+Obsoletes: sosdb < %{version}
 Release: 1%{?dist}
 Summary: Scalable Object Storage
 
@@ -94,6 +95,7 @@ rm -rf %{buildroot}
 # sosdb-devel package
 %package devel
 Summary: Development files for sosdb
+Obsoletes: sosdb-devel < %{version}
 Group: Development/Libraries
 %description devel
 SOS API Development Libraries andHeader Files
@@ -105,6 +107,7 @@ SOS API Development Libraries andHeader Files
 # sosdb-doc package
 %package doc
 Summary: sosdb documentation
+Obsoletes: sosdb-doc < %{version}
 Group: Documentation
 Obsoletes: SOS-doc
 %description doc
@@ -116,6 +119,7 @@ Documetnation for sosdb package.
 # sosdb-python package
 %package python
 Summary: python
+Obsoletes: sosdb-python < %{version}
 Group: sosdb Python
 %description python
 sosdb - Python modules
@@ -125,6 +129,8 @@ sosdb - Python modules
 
 # sosdb-tools package
 %package tools
+Obsoletes: sosdb-tools < %{version}
+Requires: sosdb-python >= %{version}
 Summary: tools
 %description tools
 Management tools for sosdb

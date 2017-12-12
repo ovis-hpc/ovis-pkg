@@ -49,8 +49,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: baler
-Version: 3.4.2
-Requires: ovis-lib-zap >= 3.4.2, ovis-lib-zap-sock >= 3.4.2, sosdb-devel >= 3.4.2
+Version: 4.0.0
+Requires: ovis-lib-zap >= %{version}, ovis-lib-zap-sock >= %{version}, sosdb-devel >= %{version}
+Obsoletes: baler < %{version}
 Release: 1%{?dist}
 Summary: Baler - a lossless, deterministic log processing tool
 Group: Applications/System
@@ -102,16 +103,10 @@ rm -rf %{buildroot}
 # files for main package
 %files
 %{_bindir}
-%{_sbindir}
 %{_libdir}
 %{_prefix}/lib*/python*
-%config %{_sysconfdir}/baler/*.env
-%config %{_sysconfdir}/baler/*.conf
-%config %{_sysconfdir}/baler/hosts.txt
-%config %{_sysconfdir}/baler/eng-dictionary
 %{_sysconfdir}
 %exclude %{_bindir}/bclient
-%exclude %{_prefix}/lib*/python*/site-packages/abhttp
 
 %posttrans
 /sbin/ldconfig
@@ -156,14 +151,13 @@ distributed baler.
 %files bclient
 %defattr(-,root,root)
 %{_bindir}/bclient
-%{_prefix}/lib*/python*/site-packages/abhttp
 
 # baler-doc package
 %package doc
 Summary: Baler documentation
 Group: Documentation
 %description doc
-Documetnation for baler package.
+Documentation for Baler package.
 %files doc
 %defattr(-,root,root)
 %{_datadir}/doc

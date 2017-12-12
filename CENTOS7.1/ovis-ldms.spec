@@ -1,6 +1,7 @@
 Name: ovis-ldms
-Version: 3.4.2
-Requires: ovis-lib-mmalloc >= 3.4.2, ovis-lib-ctrl >= 3.4.2, ovis-lib-coll >= 3.4.2
+Version: 4.0.0
+Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
+Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
 
@@ -35,6 +36,8 @@ This package provides the LDMS commands and libraries.
                 --enable-doc-man \
 		--enable-sysclassib \
 		--enable-lustre \
+		--enable-jobinfo-slurm \
+		--with-slurm=/opt/slurm \
 		--enable-sos \
 		--disable-rdma \
 		--with-ovis-lib=%{_with_ovis_lib} \
@@ -72,6 +75,7 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libstore_flatfile.*
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
 %exclude %{_libdir}/ovis-ldms/libclock.*
+%exclude %{_libdir}/ovis-ldms/libvariable.*
 
 %posttrans
 /sbin/ldconfig
@@ -138,6 +142,18 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/liblustre2_*
 %{_libdir}/ovis-ldms/liblustre_*
+
+# ovis-ldms-sampler-jobinfo
+%package sampler-jobinfo
+Summary: Jobinfo LDMSD Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-jobinfo
+%{summary}
+%files sampler-jobinfo
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libjobinfo.*
+%{_libdir}/ovis-ldms/libjobinfo_slurm.*
 
 # ovis-ldms-sampler-meminfo
 %package sampler-meminfo
@@ -301,7 +317,7 @@ Version: %{version}
 %package store-csv
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Requires: ovis-ldms-store-csv-common >= 3.4.2
+Requires: ovis-ldms-store-csv-common >= 4.0.0
 Version: %{version}
 %description store-csv
 %{summary}
@@ -314,7 +330,7 @@ Version: %{version}
 Summary: LDMSD Function CSV Store Plugin
 Group: Applications/System
 Version: %{version}
-Requires: ovis-ldms-store-csv-common >= 3.4.2
+Requires: ovis-ldms-store-csv-common >= 4.0.0
 %description store-function-csv
 %{summary}
 %files store-function-csv
@@ -325,7 +341,7 @@ Requires: ovis-ldms-store-csv-common >= 3.4.2
 %package store-sos
 Summary: LDMSD SOS Store Plugin
 Group: Applications/System
-Requires: sosdb >= 3.4.2
+Requires: sosdb >= 4.0.0
 Version: %{version}
 %description store-sos
 %{summary}
