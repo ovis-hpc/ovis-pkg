@@ -78,10 +78,22 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 
 %posttrans
-/sbin/ldconfig
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.aggregator.service %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.sampler.service %{_systemdir}/ldmsd.sampler.service
 /usr/bin/systemctl daemon-reload
+
+%post
+rm -f %{_sysconfdir}/ldms/ovis.sh
+echo %{_bindir}:%{_sbindir}:$$PATH > %{_sysconfdir}/ldms/ovis.sh
+echo LDMSD_PLUGIN_LIBPATH=${_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+echo ZAP_LIBPATH=${_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+/bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
+rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir} > %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
+echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/ln -fs %{_sysconfdir}/ldms/ldms-ldd.conf /etc/ld.so.conf.d/ldms-ldd.conf
+/sbin/ldconfig
 
 %preun
 /usr/bin/systemctl stop ldmsd.aggregator.service
