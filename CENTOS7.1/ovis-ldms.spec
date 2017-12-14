@@ -1,6 +1,6 @@
 Name: ovis-ldms
 Version: 4.0.0
-Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
+Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
@@ -78,17 +78,22 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 
 %posttrans
+/bin/rm -f %{_systemdir}/ldmsd.sampler.service
+/bin/rm -f %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.aggregator.service %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.sampler.service %{_systemdir}/ldmsd.sampler.service
 /usr/bin/systemctl daemon-reload
 
 %post
-rm -f %{_sysconfdir}/ldms/ovis.sh
-echo %{_bindir}:%{_sbindir}:$$PATH > %{_sysconfdir}/ldms/ovis.sh
+/bin/rm -f /etc/profile.d/baler.sh
+echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
 echo LDMSD_PLUGIN_LIBPATH=${_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
 echo ZAP_LIBPATH=${_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+echo BSTORE_PLUGIN_PATH=${_libdir} >> %{_sysconfdir}/ldms/ovis.sh
+echo PYTHONPATH=${_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
 /bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
-rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/rm -f /etc/ld.so.conf.d/ldms-ldd.conf
 echo %{_libdir} > %{_sysconfdir}/ldms/ldms-ldd.conf
 echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
 echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
@@ -299,7 +304,7 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libedac.*
 
-# ovis-ldms-sampler-edac
+# ovis-ldms-sampler-lnet
 %package sampler-lnet
 Summary: lnet LDMSD LNET Sampler Plugin
 Group: Applications/System

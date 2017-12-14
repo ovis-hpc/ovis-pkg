@@ -50,7 +50,7 @@
 
 Name: baler
 Version: 4.0.0
-Requires: ovis-lib-zap >= %{version}, ovis-lib-zap-sock >= %{version}, sosdb-devel >= %{version}
+Requires: sosdb >= %{version}, sosdb-devel >= %{version}
 Obsoletes: baler < %{version}
 Release: 1%{?dist}
 Summary: Baler - a lossless, deterministic log processing tool
@@ -58,10 +58,6 @@ Group: Applications/System
 License: GPLv2 or BSD
 URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
-
-# BuildRequires: libevent-devel
-# BuildRequires: ovis-lib-zap-devel
-# BuildRequires: sosdb-devel
 
 %define _prefix /opt/ovis
 %define _sysconfdir %{_prefix}/etc
@@ -71,7 +67,6 @@ Source0: %{name}-%{version}.tar.gz
 
 %description
 Baler - a lossless, deterministic log processing tool.
-
 
 %prep
 %setup -q
@@ -95,38 +90,37 @@ make %{?_smp_mflags}
 %install
 make install DESTDIR=%{buildroot}
 # remove unwanted .la files
-rm -f %{buildroot}%{_libdir}/*.la
+/bin/rm -f %{buildroot}%{_libdir}/*.la
 
 %clean
-rm -rf %{buildroot}
+/bin/rm -rf %{buildroot}
 
 # files for main package
 %files
 %{_bindir}
 %{_libdir}
 %{_prefix}/lib*/python*
-%{_sysconfdir}
+%config %{_sysconfdir}/baler/*
+%config %{_sysconfdir}/systemd/system/*
 %exclude %{_bindir}/bclient
 
 %posttrans
-/sbin/ldconfig
-/bin/ln -fs %{_sysconfdir}/systemd/system/balerd.master.service %{_systemdir}/balerd.master.service
-/bin/ln -fs %{_sysconfdir}/systemd/system/balerd.slave.service %{_systemdir}/balerd.slave.service
-/bin/ln -fs %{_sysconfdir}/systemd/system/bhttpd.service %{_systemdir}/bhttpd.service
+/bin/ln -fs %{_sysconfdir}/systemd/system/balerd.service %{_systemdir}/balerd.service
 /usr/bin/systemctl daemon-reload
+
+%post
+/bin/rm -f /etc/profile.d/baler.sh
+echo BSTORE_PLUGIN_PATH=${_libdir} > %{_sysconfdir}/baler/baler.sh
+/bin/ln -fs %{_sysconfdir}/baler/baler.sh /etc/profile.d/baler.sh
 
 %preun
-/usr/bin/systemctl stop balerd.master.service
-/usr/bin/systemctl stop balerd.slave.service
-/usr/bin/systemctl stop bhttpd.service
+/usr/bin/systemctl stop balerd.service
 
 %postun
-/bin/rm -f %{_systemdir}/bhttpd.service
-/bin/rm -f %{_systemdir}/balerd.slave.service
-/bin/rm -f %{_systemdir}/balerd.master.service
+/bin/rm -f %{_systemdir}/balerd.service
+/bin/rm -f /etc/profile.d/baler.sh
 /usr/bin/systemctl daemon-reload
 /sbin/ldconfig
-
 
 # baler-devel package
 %package devel

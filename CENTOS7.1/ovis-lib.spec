@@ -276,7 +276,7 @@ Socket transport implementation for Zap
 %defattr(-,root,root)
 %{_libdir}/ovis-lib/libzap_sock.*
 
-# zap-sock
+# zap-rdma
 %package zap-rdma
 Summary: RDMA transport implementation for Zap
 Group: Development/Libraries
