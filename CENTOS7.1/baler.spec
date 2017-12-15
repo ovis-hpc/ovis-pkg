@@ -101,7 +101,7 @@ make install DESTDIR=%{buildroot}
 %{_libdir}
 %{_prefix}/lib*/python*
 %config %{_sysconfdir}/baler/*
-%config %{_sysconfdir}/systemd/system/*
+%{_sysconfdir}/systemd
 %exclude %{_bindir}/bclient
 
 %posttrans
@@ -110,7 +110,7 @@ make install DESTDIR=%{buildroot}
 
 %post
 /bin/rm -f /etc/profile.d/baler.sh
-echo BSTORE_PLUGIN_PATH=${_libdir} > %{_sysconfdir}/baler/baler.sh
+echo export BSTORE_PLUGIN_PATH=%{_libdir} > %{_sysconfdir}/baler/baler.sh
 /bin/ln -fs %{_sysconfdir}/baler/baler.sh /etc/profile.d/baler.sh
 
 %preun
