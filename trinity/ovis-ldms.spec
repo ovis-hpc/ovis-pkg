@@ -201,7 +201,7 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libcray_dvs_sampler.*
 
-# ovis-ldms-sampler-aries
+# ovis-ldms-sampler-cray-aries
 %package sampler-cray-aries
 Summary: Cray Aries Sampler Plugins
 Group: Applications/System
@@ -215,6 +215,7 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libaries_nic_mmr.*
 %{_libdir}/ovis-ldms/libaries_rtr_mmr.*
 %{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
+%{_prefix}/etc/ldms/aries_mmr_set_configs
 
 # ovis-ldms-sampler-cray-power
 %package sampler-cray-power
