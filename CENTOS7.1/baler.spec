@@ -112,6 +112,7 @@ make install DESTDIR=%{buildroot}
 /bin/rm -f /etc/profile.d/baler.sh
 echo export BSTORE_PLUGIN_PATH=%{_libdir} > %{_sysconfdir}/baler/baler.sh
 /bin/ln -fs %{_sysconfdir}/baler/baler.sh /etc/profile.d/baler.sh
+/sbin/ldconfig
 
 %preun
 /usr/bin/systemctl stop balerd.service
