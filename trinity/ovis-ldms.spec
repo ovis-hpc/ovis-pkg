@@ -107,7 +107,7 @@ rm -rf %{buildroot}
 /bin/rm -f /etc/profile.d/ovis.sh
 echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
 echo export LDMSD_PLUGIN_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
-echo export ZAP_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
+echo export ZAP_LIBPATH=%{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ovis.sh
 echo export PYTHONPATH=%{_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
 /bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
 /bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
