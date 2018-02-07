@@ -8,7 +8,7 @@
 # Main package
 Summary: OVIS common libraries
 Name: ovis-lib
-Version: 4.0.0
+Version: 4.1.0
 Obsoletes: ovis-lib < %{version}
 Release: 1%{?dist}
 License: GPLv2 or BSD

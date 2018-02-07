@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.0.0
+Version: 4.1.0
 Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
@@ -90,6 +90,7 @@ echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
 echo export LDMSD_PLUGIN_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
 echo export ZAP_LIBPATH=%{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ovis.sh
 echo export PYTHONPATH=%{_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
+echo export LDMS_AUTH_FILE=%{_sysconfdir}/ldms/ldmsauth.conf >> %{_sysconfdir}/ldms/ovis.sh
 /bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
 /bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
 /bin/rm -f /etc/ld.so.conf.d/ldms-ldd.conf
@@ -333,7 +334,7 @@ Version: %{version}
 %package store-csv
 Summary: CSV LDMSD Store Plugin
 Group: Applications/System
-Requires: ovis-ldms-store-csv-common >= 4.0.0
+Requires: ovis-ldms-store-csv-common >= %{version}
 Version: %{version}
 %description store-csv
 %{summary}
@@ -346,7 +347,7 @@ Version: %{version}
 Summary: LDMSD Function CSV Store Plugin
 Group: Applications/System
 Version: %{version}
-Requires: ovis-ldms-store-csv-common >= 4.0.0
+Requires: ovis-ldms-store-csv-common >= %{version}
 %description store-function-csv
 %{summary}
 %files store-function-csv
@@ -357,7 +358,7 @@ Requires: ovis-ldms-store-csv-common >= 4.0.0
 %package store-sos
 Summary: LDMSD SOS Store Plugin
 Group: Applications/System
-Requires: sosdb >= 4.0.0
+Requires: sosdb >= %{version}
 Version: %{version}
 %description store-sos
 %{summary}

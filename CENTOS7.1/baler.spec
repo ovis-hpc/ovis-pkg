@@ -49,7 +49,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: baler
-Version: 4.0.0
+Version: 4.1.0
 Requires: sosdb >= %{version}, sosdb-devel >= %{version}
 Obsoletes: baler < %{version}
 Release: 1%{?dist}
