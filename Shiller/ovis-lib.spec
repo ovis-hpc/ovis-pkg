@@ -16,13 +16,6 @@ Group: Development/Libraries
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Source: %{name}-%{version}.tar.gz
 
-# BuildRequires: swig
-BuildRequires: python-devel
-# BuildRequires: libibverbs-devel
-# BuildRequires: librdmacm-devel
-BuildRequires: libevent-devel
-BuildRequires: openssl-devel
-
 Url: https://www.opengridcomputing.com/
 %define _prefix /opt/ovis
 %define _sysconfdir %{_prefix}/etc
@@ -36,13 +29,7 @@ This package provides common OVIS libraries.
 %setup -q
 
 %build
-%configure --enable-swig \
-                --enable-etc \
-                --enable-doc \
-                --enable-doc-man \
-                --enable-rdma \
-                --disable-rpath \
-                CFLAGS='-g -O3'
+%configure --disable-rpath CFLAGS='-g -O3'
 make
 
 %install
@@ -211,7 +198,6 @@ OVIS utility library
 %files util
 %defattr(-,root,root)
 %{_libdir}/libovis_util*
-%{_libdir}/libovis_util.so.0
 %{_libdir}/libjson_parser*
 
 %post util
@@ -269,37 +255,14 @@ Summary: Socket transport implementation for Zap
 Group: Development/Libraries
 Version: %{version}
 Obsoletes: ovis-lib-zap-sock < %{version}
-Requires: ovis-lib-zap >= %{version}, ovis-lib-coll >= %{version}, libevent >= 2.0.21
+Requires: ovis-lib-zap >= %{version}, ovis-lib-coll >= %{version}
+#, libevent >= 2.0.21
 %description zap-sock
 Socket transport implementation for Zap
 %files zap-sock
 %defattr(-,root,root)
 %{_libdir}/ovis-lib/libzap_sock.*
 
-# zap-rdma
-%package zap-rdma
-Summary: RDMA transport implementation for Zap
-Group: Development/Libraries
-Version: %{version}
-Obsoletes: ovis-lib-zap-rdma < %{version}
-Requires: ovis-lib-zap >= %{version}, ovis-lib-coll >= %{version}, libevent >= 2.0.21
-%description zap-rdma
-RDMA transport implementation for Zap
-%files zap-rdma
-%defattr(-,root,root)
-%{_libdir}/ovis-lib/libzap_rdma.*
-
-# python
-%package python
-Summary: Python API for ovis_lib services
-Group: Development/Libraries
-Version: %{version}
-Obsoletes: ovis-lib-python < %{version}
-%description python
-Python API for ovis_lib services
-%files python
-%defattr(-,root,root)
-%{_prefix}/lib*/python*/site-packages/ovis_lib/*
 
 %package misc
 Summary: Miscellaneous files in the ovis-lib project.
@@ -312,10 +275,6 @@ Miscellaneous files in the ovis-lib project.
 %{_libdir}/ovis-lib-configvars.sh
 %{_includedir}/ovis-lib-config.h
 %{_bindir}/lib-pedigree
-%{_sysconfdir}/
-%{_prefix}/share/doc/ovis-lib-*/COPYING
-%{_prefix}/share/doc/ovis-lib-*/README
-%{_prefix}/share/doc/ovis-lib-*/ChangeLog
 %exclude %{_includedir}/ovis-test/
 
 %posttrans misc

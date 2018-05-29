@@ -49,9 +49,6 @@ License: GPLv2 or BSD
 URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
 
-BuildRequires: swig
-BuildRequires: python-devel
-
 %define _prefix /opt/ovis
 
 %description
@@ -65,11 +62,9 @@ to efficiently manage structured data on persistent media.
 %configure --enable-swig \
 		--enable-python \
 		--enable-etc \
-		--enable-doc \
-		--enable-doc-html \
-		--enable-doc-man \
 		--disable-rpath \
-		CFLAGS='-g -O3'
+		CFLAGS='-g -O3' \
+		LDFLAGS='-L/usr/local/lib -lm -lpthread'
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
@@ -103,18 +98,6 @@ SOS API Development Libraries andHeader Files
 %defattr(-,root,root)
 %{_includedir}/ods/
 %{_includedir}/sos/
-
-# sosdb-doc package
-%package doc
-Summary: sosdb documentation
-Obsoletes: sosdb-doc < %{version}
-Group: Documentation
-Obsoletes: SOS-doc
-%description doc
-Documetnation for sosdb package.
-%files doc
-%defattr(-,root,root)
-%{_datadir}/doc
 
 # sosdb-python package
 %package python

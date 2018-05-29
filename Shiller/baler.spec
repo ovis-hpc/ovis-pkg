@@ -75,9 +75,6 @@ Baler - a lossless, deterministic log processing tool.
 %configure \
 	--enable-etc \
 	--enable-swig \
-	--enable-doc \
-	--enable-doc-html \
-	--enable-doc-man \
 	--disable-rpath \
 	--with-ovis-lib=%{_with_ovis_lib} \
 	--with-sos=%{_with_sos} \

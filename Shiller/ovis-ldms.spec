@@ -31,14 +31,12 @@ This package provides the LDMS commands and libraries.
 %configure --enable-etc \
 		--enable-swig \
 		--enable-ldms-python \
-                --enable-doc \
-                --enable-doc-html \
-                --enable-doc-man \
-		--enable-sysclassib \
-		--enable-lustre \
 		--enable-jobinfo-slurm \
 		--with-slurm=/opt/slurm \
+    		--enable-kokkos \
+		--disable-rpath \
 		--disable-tsampler \
+		--disable-mpi-sampler \
 		--enable-sos \
 		--with-ovis-lib=%{_with_ovis_lib} \
 		--with-sos=%{_with_sos} \
@@ -130,8 +128,8 @@ Group: Documentation
 Documentation for LDMS subsystem
 %files doc
 %defattr(-,root,root)
-%{_datadir}/doc
-%{_datadir}/man
+%{_datadir}/doc/
+%{_mandir}/man*
 
 ###################
 # Authentication Plugins
@@ -292,18 +290,6 @@ Requires: ovis-ldms-sampler-base >= %{version}
 %files sampler-synthetic
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libsynthetic.*
-
-# ovis-ldms-sampler-sysclassib
-%package sampler-sysclassib
-Summary: sysclassib LDMSD Sampler Plugin
-Group: Applications/System
-Version: %{version}
-Requires: ovis-ldms-sampler-base >= %{version}
-%description sampler-sysclassib
-%{summary}
-%files sampler-sysclassib
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libsysclassib.*
 
 # ovis-ldms-sampler-vmstat
 %package sampler-vmstat

@@ -5,6 +5,7 @@
 OVIS_SRC=$(dirname $PWD)/ovis
 
 CFLAGS='-g -O3'
+LDFLAGS='-L/usr/local/lib -lm -lpthread'
 
 # Exit immediately if a command failed
 set -e
@@ -49,7 +50,7 @@ function spec_name() {
 	echo -n $(pkg_name $1).spec
 }
 
-LIST="sos baler ovis/lib ovis/ldms"
+LIST="sos ovis/lib ovis/ldms"
 for X in $LIST; do
 	echo "----------------------------------"
 	echo "$X"
@@ -63,7 +64,7 @@ for X in $LIST; do
 	mkdir -p $BUILD_DIR
 	pushd $BUILD_DIR
 	rm -rf * # Making sure that the build is clean
-	../configure $WITH # doesn't need other options here as this is for
+	../configure LDFLAGS="-L/usr/local/lib -lm -lpthread" $WITH # doesn't need other options here as this is for
 			   # `make dist` only. For the enable/disable
 			   # options for each package, please see configure
 			   # options in their spec files.

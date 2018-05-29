@@ -62,6 +62,8 @@ rm -rf %{buildroot}
 %{_bindir}
 %{_sbindir}
 %{_libdir}/libldms.*
+%{_libdir}/libsampler_base.*
+%{_libdir}/libldms_auth_*
 %{_prefix}/lib*/python*
 %{_datadir}/doc/%{name}-%{version}/AUTHORS
 %{_datadir}/doc/%{name}-%{version}/COPYING
@@ -101,15 +103,14 @@ echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
 /sbin/ldconfig
 
 %preun
-/usr/bin/systemctl stop ldmsd.aggregator.service
-/usr/bin/systemctl stop ldmsd.sampler.service
+# /usr/bin/systemctl stop ldmsd.aggregator.service
+# /usr/bin/systemctl stop ldmsd.sampler.service
 
 %postun
 /bin/rm -f %{_systemdir}/ldmsd.aggregator.service
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
 /usr/bin/systemctl daemon-reload
 /sbin/ldconfig
-
 
 # ovis-ldms-devel package
 %package devel
@@ -315,6 +316,20 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/liblnet_stats.*
 
+# ovis-ldms-sampler-cray-power
+%package sampler-cray-power
+Summary: Cray Power Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-cray-power
+%{summary}
+%files sampler-cray-power
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libcray_power_sampler.*
+%{_libdir}/ovis-ldms/libtsampler.*
+%{_libdir}/ovis-ldms/libtimer_base.*
+%{_libdir}/ovis-ldms/libhfclock.*
+
 #################
 # store plugins #
 #################
@@ -365,5 +380,16 @@ Version: %{version}
 %files store-sos
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libstore_sos.*
+
+# ovis-ldms-store-kokkos
+%package store-kokkos
+Summary: LDMSD Kokkos Store Plugin
+Group: Applications/System
+Version: %{version}
+%description store-kokkos
+%{summary}
+%files store-kokkos
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libkokkos_store.*
 
 %changelog
