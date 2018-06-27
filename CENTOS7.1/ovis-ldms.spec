@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.1.0
+Version: 4.1.1
 Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
