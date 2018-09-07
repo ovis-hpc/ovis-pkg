@@ -1,6 +1,7 @@
 Name: ovis-ldms
-Version: 4.0.0
-Requires: ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}
+Version: 4.1.1
+Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
+Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
 
@@ -25,17 +26,20 @@ This package provides the LDMS commands and libraries.
 %prep
 %setup -q
 
+
 %build
 %configure --enable-etc \
+		--enable-munge \
 		--enable-swig \
 		--enable-ldms-python \
-                --enable-ugni \
-		--enable-kgnilnd \
                 --enable-doc \
                 --enable-doc-html \
                 --enable-doc-man \
-		--enable-sysclassib \
 		--enable-lustre \
+		--enable-jobinfo-slurm \
+		--with-slurm=/opt/slurm \
+		--enable-ugni \
+		--enable-kgnilnd \
 		--enable-tsampler \
 		--enable-cray_power_sampler \
 		--enable-cray_system_sampler \
@@ -43,20 +47,17 @@ This package provides the LDMS commands and libraries.
 		--enable-aries-gpcdr \
 		--enable-aries_mmr \
 		--enable-aries_linkstatus \
-		--enable-jobinfo \
-		--enable-jobinfo-slurm \
-		--enable-sos \
 		--enable-rdma \
-		--disable-mmap \
-		--disable-readline \
-		--with-slurm=%{_with_slurm} \
+		--enable-sos \
+		--disable-dstat \
+		--enable-kokkos \
 		--with-sos=%{_with_sos} \
 		--with-ovis-lib=%{_with_ovis_lib} \
 		--with-aries-libgpcd=%{_with_aries_libgpcd} \
 		--with-rca=%{_with_rca} \
 		--with-krca=%{_with_krca} \
 		--with-cray-hss-devel=%{_with_cray_hss_devel} \
-		CFLAGS="-g -O3"
+		CFLAGS="-g -O2"
 
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -73,25 +74,20 @@ rm -rf %{buildroot}
 
 # files for main package
 %files
-%{_bindir}/envldms.sh
-%{_bindir}/ldms_ban.sh
-%{_bindir}/ldms-meminfo.sh
-%{_bindir}/ldms-pedigree
-%{_bindir}/ldms_plugins_list.sh
-%{_bindir}/ldms-py-edac_test.sh
-%{_bindir}/ldms-py-fptrans_test.sh
-%{_bindir}/ldms-py-subset_test.sh
-%{_bindir}/ldms-py-syslog.sh
-%{_bindir}/ldms-py-rename.sh
-%{_bindir}/ldms-py-varset.sh
+%{_bindir}
 %{_sbindir}
 %{_libdir}/libldms.*
+%{_libdir}/libsampler_base.*
+%{_libdir}/libldms_auth_*
+%{_prefix}/lib*/python*
 %{_datadir}/doc/%{name}-%{version}/AUTHORS
 %{_datadir}/doc/%{name}-%{version}/COPYING
 %{_datadir}/doc/%{name}-%{version}/ChangeLog
 %{_datadir}/doc/%{name}-%{version}/README
 %config %{_sysconfdir}/ldms/*
 %{_sysconfdir}/systemd
+#%exclude %{_sysconfdir}/init.d
+#%exclude %{_sysconfdir}/ovis
 %exclude %{_libdir}/ovis-ldms-configvars.sh
 %exclude %{_libdir}/ovis-ldms/libstore_flatfile.*
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
@@ -99,8 +95,12 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 
 %posttrans
+/bin/rm -f %{_systemdir}/ldmsd.sampler.service
+/bin/rm -f %{_systemdir}/ldmsd.aggregator.service
+/bin/rm -f %{_systemdir}/ldmsd.kokkos.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.aggregator.service %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.sampler.service %{_systemdir}/ldmsd.sampler.service
+/bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.kokkos.service %{_systemdir}/ldmsd.kokkos.service
 /usr/bin/systemctl daemon-reload
 
 %post
@@ -109,9 +109,10 @@ echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
 echo export LDMSD_PLUGIN_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
 echo export ZAP_LIBPATH=%{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ovis.sh
 echo export PYTHONPATH=%{_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
+echo export LDMS_AUTH_FILE=%{_sysconfdir}/ldms/ldmsauth.conf >> %{_sysconfdir}/ldms/ovis.sh
 /bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
 /bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
-/bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
+/bin/rm -f /etc/ld.so.conf.d/ldms-ldd.conf
 echo %{_libdir} > %{_sysconfdir}/ldms/ldms-ldd.conf
 echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
 echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
@@ -119,25 +120,15 @@ echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
 /sbin/ldconfig
 
 %preun
-/usr/bin/systemctl stop ldmsd.aggregator.service
-/usr/bin/systemctl stop ldmsd.sampler.service
+# /usr/bin/systemctl stop ldmsd.aggregator.service
+# /usr/bin/systemctl stop ldmsd.sampler.service
 
 %postun
 /bin/rm -f %{_systemdir}/ldmsd.aggregator.service
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
+/bin/rm -f %{_systemdir}/ldmsd.kokkos.service
 /usr/bin/systemctl daemon-reload
 /sbin/ldconfig
-
-# ovis-ldms-python package
-%package python
-Summary: Python tools and interfaces package
-Group: Development/Libraries
-%description python
-Python tools and evelopment interfaces
-%files python
-%defattr(-,root,root)
-%{_bindir}/ldmsd_controller
-%{_prefix}/lib*/python*
 
 # ovis-ldms-devel package
 %package devel
@@ -165,81 +156,6 @@ Documentation for LDMS subsystem
 # sampler plugins #
 ###################
 
-# ovis-ldms-sampler-jobinfo
-%package sampler-jobinfo
-Summary: Job Information Sampler
-Group: Applications/System
-Version: %{version}
-%description sampler-jobinfo
-%{summary}
-%files sampler-jobinfo
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libjobinfo.*
-%{_libdir}/ovis-ldms/libjobinfo_slurm.*
-
-# ovis-ldms-sampler-tsampler
-%package sampler-tsampler
-Summary: High Frequency Sampler Plugins
-Group: Applications/System
-Version: %{version}
-%description sampler-tsampler
-%{summary}
-%files sampler-tsampler
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libtsampler.*
-%{_libdir}/ovis-ldms/libhfclock.*
-%{_libdir}/ovis-ldms/libtimer_base.*
-
-# ovis-ldms-sampler-cray-dvs
-%package sampler-cray-dvs
-Summary: Cray DVS Sampler Plugin
-Group: Applications/System
-Version: %{version}
-%description sampler-cray-dvs
-%{summary}
-%files sampler-cray-dvs
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libcray_dvs_sampler.*
-
-# ovis-ldms-sampler-cray-aries
-%package sampler-cray-aries
-Summary: Cray Aries Sampler Plugins
-Group: Applications/System
-Version: %{version}
-%description sampler-cray-aries
-%{summary}
-%files sampler-cray-aries
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libaries_linkstatus.*
-%{_libdir}/ovis-ldms/libaries_mmr.*
-%{_libdir}/ovis-ldms/libaries_nic_mmr.*
-%{_libdir}/ovis-ldms/libaries_rtr_mmr.*
-%{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
-%{_prefix}/etc/ldms/aries_mmr_set_configs
-
-# ovis-ldms-sampler-cray-power
-%package sampler-cray-power
-Summary: Cray Power Sampler Plugins
-Group: Applications/System
-Version: %{version}
-Requires: ovis-ldms-sampler-tsampler >= %{version}
-%description sampler-cray-power
-%{summary}
-%files sampler-cray-power
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libcray_power_sampler.*
-
-# ovis-ldms-sampler-kgnilnd
-%package sampler-kgnilnd
-Summary: Cray KGNI LND LDMS Sampler Plugin
-Group: Applications/System
-Version: %{version}
-%description sampler-kgnilnd
-%{summary}
-%files sampler-kgnilnd
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libkgnilnd.*
-
 # ovis-ldms-sampler-generic
 %package sampler-generic
 Summary: Generic LDMSD Sampler Plugin
@@ -262,6 +178,18 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/liblustre2_*
 %{_libdir}/ovis-ldms/liblustre_*
+
+# ovis-ldms-sampler-jobinfo
+%package sampler-jobinfo
+Summary: Jobinfo LDMSD Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-jobinfo
+%{summary}
+%files sampler-jobinfo
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libjobinfo.*
+%{_libdir}/ovis-ldms/libjobinfo_slurm.*
 
 # ovis-ldms-sampler-meminfo
 %package sampler-meminfo
@@ -352,15 +280,15 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libsynthetic.*
 
 # ovis-ldms-sampler-sysclassib
-%package sampler-sysclassib
-Summary: sysclassib LDMSD Sampler Plugin
-Group: Applications/System
-Version: %{version}
-%description sampler-sysclassib
-%{summary}
-%files sampler-sysclassib
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libsysclassib.*
+# %package sampler-sysclassib
+# Summary: sysclassib LDMSD Sampler Plugin
+# Group: Applications/System
+# Version: %{version}
+# %description sampler-sysclassib
+# %{summary}
+# %files sampler-sysclassib
+# %defattr(-,root,root)
+# %{_libdir}/ovis-ldms/libsysclassib.*
 
 # ovis-ldms-sampler-vmstat
 %package sampler-vmstat
@@ -395,17 +323,72 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libedac.*
 
-# ovis-ldms-sampler-lnet_stats
-%package sampler-lnet_stats
-Summary: Lustre Network Statistics LDMSD Sampler Plugin
+# ovis-ldms-sampler-lnet
+%package sampler-lnet
+Summary: lnet LDMSD LNET Sampler Plugin
 Group: Applications/System
 Version: %{version}
-%description sampler-lnet_stats
+%description sampler-lnet
 %{summary}
-%files sampler-lnet_stats
+%files sampler-lnet
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/liblnet_stats.*
 
+########################################################################
+# Cray Specific Samplersa
+########################################################################
+
+# ovis-ldms-sampler-cray-dvs
+%package sampler-cray-dvs
+Summary: Cray DVS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-cray-dvs
+%{summary}
+%files sampler-cray-dvs
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libcray_dvs_sampler.*
+
+# ovis-ldms-sampler-cray-aries
+%package sampler-cray-aries
+Summary: Cray Aries Sampler Plugins
+Group: Applications/System
+Version: %{version}
+%description sampler-cray-aries
+%{summary}
+%files sampler-cray-aries
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libaries_linkstatus.*
+%{_libdir}/ovis-ldms/libaries_mmr.*
+%{_libdir}/ovis-ldms/libaries_nic_mmr.*
+%{_libdir}/ovis-ldms/libaries_rtr_mmr.*
+%{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
+%{_prefix}/etc/ldms/aries_mmr_set_configs
+
+# ovis-ldms-sampler-cray-power
+%package sampler-cray-power
+Summary: Cray Power Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-cray-power
+%{summary}
+%files sampler-cray-power
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libcray_power_sampler.*
+%{_libdir}/ovis-ldms/libtsampler.*
+%{_libdir}/ovis-ldms/libtimer_base.*
+%{_libdir}/ovis-ldms/libhfclock.*
+
+# ovis-ldms-sampler-kgnilnd
+%package sampler-kgnilnd
+Summary: Cray KGNI LND LDMS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-kgnilnd
+%{summary}
+%files sampler-kgnilnd
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libkgnilnd.*
 
 #################
 # store plugins #
@@ -457,5 +440,16 @@ Version: %{version}
 %files store-sos
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libstore_sos.*
+
+# ovis-ldms-store-kokkos
+%package store-kokkos
+Summary: LDMSD Kokkos Store Plugin
+Group: Applications/System
+Version: %{version}
+%description store-kokkos
+%{summary}
+%files store-kokkos
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libkokkos_store.*
 
 %changelog

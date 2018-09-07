@@ -33,7 +33,6 @@ TMP_ROOT_PREFIX=$TMP_ROOT/opt/ovis
 mkdir -p $TMP_ROOT_PREFIX
 
 WITH_OVIS_LIB="--with-ovis-lib=$TMP_ROOT_PREFIX"
-WITH_SOS="--with-sos=$TMP_ROOT_PREFIX"
 WITH_SLURM="--with-slurm=/opt/slurm"
 
 WITH="$WITH_OVIS_LIB $WITH_SOS $WITH_SLURM"
@@ -89,8 +88,8 @@ for X in $LIST; do
 	cp $SPEC $RPMBUILD/SPECS
 	rpmbuild --define "_topdir $RPMBUILD" \
 		--define "_with_ovis_lib $TMP_ROOT_PREFIX" \
-		--define "_with_slurm /opt/slurm" \
 		--define "_with_sos $TMP_ROOT_PREFIX" \
+		--define "_with_slurm /opt/slurm" \
 		--define "_with_aries_libgpcd $ARIES_LIBGPCD" \
 		--define "_with_rca /opt/cray/rca/default" \
 		--define "_with_krca /opt/cray/krca/default" \
