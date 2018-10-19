@@ -8,9 +8,14 @@
 # The format ofthe option is as follows:
 # --with-aries-libgpcd=LIBDIR,INCDIR for aries-mmr
 #
-# module load python
-module swap PrgEnv-intel PrgEnv-gnu
-module load python/2.7-anaconda-4.1.1
+# module load pycthon
+# module unload PrgEnv-intel
+# module unload PrgEnv-gnu
+# module load PrgEnv-gnu
+# module load PrgEnv-intel
+# module load python/2.7-anaconda-4.1.1
+# module unload perftools-base
+# module load papi
 ARIES_LIBGPCD=/opt/cray/gni/default/lib64,/opt/cray/gni/default/include/gpcd
 PLATFORM=TRINITY
 OVIS_SRC=$(dirname $PWD)/ovis

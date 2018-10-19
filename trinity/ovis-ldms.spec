@@ -41,6 +41,7 @@ This package provides the LDMS commands and libraries.
 		--enable-ugni \
 		--enable-kgnilnd \
 		--enable-tsampler \
+		--enable-hweventpapi \
 		--enable-cray_power_sampler \
 		--enable-cray_system_sampler \
 		--disable-gpcdlocal \
@@ -101,6 +102,7 @@ rm -rf %{buildroot}
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.aggregator.service %{_systemdir}/ldmsd.aggregator.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.sampler.service %{_systemdir}/ldmsd.sampler.service
 /bin/ln -fs %{_sysconfdir}/systemd/system/ldmsd.kokkos.service %{_systemdir}/ldmsd.kokkos.service
+/bin/ln -fs %{_sysconfdir}/systemd/system/papi-sampler.service %{_systemdir}/papi-sampler.service
 /usr/bin/systemctl daemon-reload
 
 %post
@@ -127,6 +129,7 @@ echo %{_libdir}/ovis-lib >> %{_sysconfdir}/ldms/ldms-ldd.conf
 /bin/rm -f %{_systemdir}/ldmsd.aggregator.service
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
 /bin/rm -f %{_systemdir}/ldmsd.kokkos.service
+/bin/rm -f %{_systemdir}/papi-sampler.service
 /usr/bin/systemctl daemon-reload
 /sbin/ldconfig
 
@@ -155,6 +158,17 @@ Documentation for LDMS subsystem
 ###################
 # sampler plugins #
 ###################
+
+# ovis-hweventpapi
+%package sampler-hweventpapi
+Summary: LDMSD PAPI Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-hweventpapi
+%{summary}
+%files sampler-hweventpapi
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libhweventpapi.*
 
 # ovis-ldms-sampler-generic
 %package sampler-generic
