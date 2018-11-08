@@ -8,14 +8,13 @@
 # The format ofthe option is as follows:
 # --with-aries-libgpcd=LIBDIR,INCDIR for aries-mmr
 #
-# module load pycthon
 # module unload PrgEnv-intel
 # module unload PrgEnv-gnu
 # module load PrgEnv-gnu
-# module load PrgEnv-intel
 # module load python/2.7-anaconda-4.1.1
 # module unload perftools-base
 # module load papi
+LIBPAPI=/opt/cray/pe/papi/5.6.0.1
 ARIES_LIBGPCD=/opt/cray/gni/default/lib64,/opt/cray/gni/default/include/gpcd
 PLATFORM=TRINITY
 OVIS_SRC=$(dirname $PWD)/ovis
@@ -99,6 +98,7 @@ for X in $LIST; do
 		--define "_with_rca /opt/cray/rca/default" \
 		--define "_with_krca /opt/cray/krca/default" \
 		--define "_with_cray_hss_devel /opt/cray-hss-devel/default" \
+		--define "_with_libpapi $LIBPAPI" \
 		-ba $RPMBUILD/SPECS/$SPEC
 
 	case $X in

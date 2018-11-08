@@ -58,6 +58,7 @@ This package provides the LDMS commands and libraries.
 		--with-rca=%{_with_rca} \
 		--with-krca=%{_with_krca} \
 		--with-cray-hss-devel=%{_with_cray_hss_devel} \
+		--with-libpapi=%{_with_libpapi} \
 		CFLAGS="-g -O2"
 
 # disable rpath when librool re-link
