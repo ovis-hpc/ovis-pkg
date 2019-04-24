@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.1.1
+Version: 4.2.1
 Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
@@ -41,7 +41,6 @@ This package provides the LDMS commands and libraries.
 		--enable-ugni \
 		--enable-kgnilnd \
 		--enable-tsampler \
-		--enable-hweventpapi \
 		--enable-cray_power_sampler \
 		--enable-cray_system_sampler \
 		--disable-gpcdlocal \
@@ -95,6 +94,7 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
 %exclude %{_libdir}/ovis-ldms/libclock.*
 %exclude %{_libdir}/ovis-ldms/libvariable.*
+%exclude %{_libdir}/ovis-ldms/libstore_none.*
 
 %posttrans
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
@@ -159,17 +159,6 @@ Documentation for LDMS subsystem
 ###################
 # sampler plugins #
 ###################
-
-# ovis-hweventpapi
-%package sampler-hweventpapi
-Summary: LDMSD PAPI Sampler Plugin
-Group: Applications/System
-Version: %{version}
-%description sampler-hweventpapi
-%{summary}
-%files sampler-hweventpapi
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libhweventpapi.*
 
 # ovis-ldms-sampler-generic
 %package sampler-generic
