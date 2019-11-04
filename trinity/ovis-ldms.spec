@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.2.1
+Version: 4.3.3
 Requires: ovis-lib-zap-sock >= %{version}, ovis-lib-mmalloc >= %{version}, ovis-lib-ctrl >= %{version}, ovis-lib-coll >= %{version}, ovis-lib-auth >= %{version}
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
@@ -58,6 +58,9 @@ This package provides the LDMS commands and libraries.
 		--with-krca=%{_with_krca} \
 		--with-cray-hss-devel=%{_with_cray_hss_devel} \
 		--with-libpapi=%{_with_libpapi} \
+		--with-libpfm=%{_with_libpapi} \
+		--enable-syspapi-sampler \
+		--enable-papi-sampler \
 		CFLAGS="-g -O2"
 
 # disable rpath when librool re-link
@@ -78,6 +81,9 @@ rm -rf %{buildroot}
 %{_bindir}
 %{_sbindir}
 %{_libdir}/libldms.*
+%{_libdir}/libldmsd_stream.*
+%{_libdir}/libplugattr.*
+%{_libdir}/librequest.*
 %{_libdir}/libsampler_base.*
 %{_libdir}/libldms_auth_*
 %{_prefix}/lib*/python*
@@ -250,17 +256,6 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libprocnfs.*
 
-# ovis-ldms-sampler-procsensors
-%package sampler-procsensors
-Summary: procsensors LDMSD Sampler Plugin
-Group: Applications/System
-Version: %{version}
-%description sampler-procsensors
-%{summary}
-%files sampler-procsensors
-%defattr(-,root,root)
-%{_libdir}/ovis-ldms/libprocsensors.*
-
 # ovis-ldms-sampler-procstat
 %package sampler-procstat
 Summary: procstat LDMSD Sampler Plugin
@@ -394,6 +389,39 @@ Version: %{version}
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libkgnilnd.*
 
+# ovis-ldms-sampler-slurm
+%package sampler-slurm
+Summary: Slurm LDMS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-slurm
+%{summary}
+%files sampler-slurm
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libslurm_sampler.*
+
+# ovis-ldms-sampler-papi
+%package sampler-papi
+Summary: PAPI LDMS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-papi
+%{summary}
+%files sampler-papi
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libpapi_sampler.*
+
+# ovis-ldms-sampler-syspapi
+%package sampler-syspapi
+Summary: System-wide PAPI LDMS Sampler Plugin
+Group: Applications/System
+Version: %{version}
+%description sampler-syspapi
+%{summary}
+%files sampler-syspapi
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libsyspapi_sampler.*
+
 #################
 # store plugins #
 #################
@@ -455,5 +483,38 @@ Version: %{version}
 %files store-kokkos
 %defattr(-,root,root)
 %{_libdir}/ovis-ldms/libkokkos_store.*
+
+# ovis-ldms-store-influx
+%package store-influx
+Summary: LDMSD Influx Store Plugin
+Group: Applications/System
+Version: %{version}
+%description store-influx
+%{summary}
+%files store-influx
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libstore_influx.*
+
+# ovis-ldms-store-papi
+%package store-papi
+Summary: LDMSD PAPI Store Plugin
+Group: Applications/System
+Version: %{version}
+%description store-papi
+%{summary}
+%files store-papi
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libstore_papi.*
+
+# ovis-ldms-store-slurm
+%package store-slurm
+Summary: LDMSD Slurm Store Plugin
+Group: Applications/System
+Version: %{version}
+%description store-slurm
+%{summary}
+%files store-slurm
+%defattr(-,root,root)
+%{_libdir}/ovis-ldms/libstore_slurm.*
 
 %changelog

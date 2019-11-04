@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 4.2.1
+Version: 4.3.1
 Obsoletes: sosdb < %{version}
 Release: 1%{?dist}
 Summary: Scalable Object Storage
@@ -116,6 +116,7 @@ Documetnation for sosdb package.
 %files doc
 %defattr(-,root,root)
 %{_datadir}/doc
+%{_datadir}/man
 
 # sosdb-python package
 %package python

@@ -8,7 +8,7 @@
 # Main package
 Summary: OVIS common libraries
 Name: ovis-lib
-Version: 4.2.1
+Version: 4.3.3
 Obsoletes: ovis-lib < %{version}
 Release: 1%{?dist}
 License: GPLv2 or BSD
@@ -213,6 +213,7 @@ OVIS utility library
 %{_libdir}/libovis_util*
 %{_libdir}/libovis_util.so.0
 %{_libdir}/libjson_parser*
+%{_libdir}/libjson_util*
 
 %post util
 /sbin/ldconfig
@@ -231,6 +232,7 @@ Development files for ovis-lib-util library
 %defattr(-,root,root)
 %{_includedir}/ovis_util/
 %{_includedir}/json_parser/json.h
+%{_includedir}/json/json_util.h
 
 # zap
 %package zap
@@ -329,6 +331,7 @@ Miscellaneous files in the ovis-lib project.
 %{_prefix}/share/doc/ovis-lib-*/README
 %{_prefix}/share/doc/ovis-lib-*/ChangeLog
 %exclude %{_includedir}/ovis-test/
+%exclude %{_sbindir}/json_test
 
 %posttrans misc
 /bin/ln -fs %{_sysconfdir}/profile.d/set-ovis-variables.sh /etc/profile.d/set-ovis-variables.sh
