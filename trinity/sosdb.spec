@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 4.3.1
+Version: 4.3.4
 Obsoletes: sosdb < %{version}
 Release: 1%{?dist}
 Summary: Scalable Object Storage
@@ -49,7 +49,6 @@ License: GPLv2 or BSD
 URL: https://www.opengridcomputing.com
 Source0: %{name}-%{version}.tar.gz
 
-BuildRequires: swig
 BuildRequires: python-devel
 
 %define _prefix /opt/ovis
@@ -69,7 +68,8 @@ to efficiently manage structured data on persistent media.
 		--enable-doc-html \
 		--enable-doc-man \
 		--disable-rpath \
-		CFLAGS='-g -O3'
+		COMMIT_ID=%{_commit_id} \
+		CFLAGS="-g -O3"
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
@@ -84,24 +84,21 @@ rm -rf %{buildroot}
 
 # files for main package
 %files
+%defattr(-,root,root)
 %{_bindir}/ods_dump
 %{_bindir}/sos_*
+%{_bindir}/lmq
+%{_bindir}/sos-db
+%{_bindir}/sos-import-csv
+%{_bindir}/sos-monitor
+%{_bindir}/sos-part
+%{_bindir}/sos-schema
 %{_libdir}/libidx_*
 %{_libdir}/libkey_*
 %{_libdir}/libods.*
 %{_libdir}/libsos.*
 %{_libdir}/sos-configvars.sh
 %{_prefix}/lib*/python*/site-packages/sosdb/
-
-# sosdb-devel package
-%package devel
-Summary: Development files for sosdb
-Obsoletes: sosdb-devel < %{version}
-Group: Development/Libraries
-%description devel
-SOS API Development Libraries andHeader Files
-%files devel
-%defattr(-,root,root)
 %{_includedir}/ods/
 %{_includedir}/sos/
 
@@ -118,31 +115,3 @@ Documetnation for sosdb package.
 %{_datadir}/doc
 %{_datadir}/man
 
-# sosdb-python package
-%package python
-Summary: python
-Obsoletes: sosdb-python < %{version}
-Group: sosdb Python
-%description python
-sosdb - Python modules
-%files python
-%defattr(-,root,root)
-%{_prefix}/lib*/python*/site-packages/sosdb/
-
-# sosdb-tools package
-%package tools
-Obsoletes: sosdb-tools < %{version}
-Requires: sosdb-python >= %{version}
-Summary: tools
-%description tools
-Management tools for sosdb
-%files tools
-%defattr(-,root,root)
-%{_bindir}/lmq
-%{_bindir}/sos-db
-%{_bindir}/sos-import-csv
-%{_bindir}/sos-monitor
-%{_bindir}/sos-part
-%{_bindir}/sos-schema
-
-%changelog
