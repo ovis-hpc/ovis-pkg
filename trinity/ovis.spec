@@ -214,6 +214,7 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libslurm_notifier.*
 %{_libdir}/ovis-ldms/libpapi_sampler.*
 %{_libdir}/ovis-ldms/libsyspapi_sampler.*
+%{_libdir}/ovis-ldms/libloadavg.*
 
 #################
 # store plugins #
