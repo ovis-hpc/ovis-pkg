@@ -115,6 +115,7 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 %exclude %{_libdir}/ovis-ldms/libstore_none.*
 %exclude %{_sbindir}/json_test
+%exclude %{_prefix}/etc/ldms/aries_mmr_set_configs
 
 %posttrans
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
@@ -200,6 +201,7 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libcray_dvs_sampler.*
 %{_libdir}/ovis-ldms/libaries_linkstatus.*
 %{_libdir}/ovis-ldms/libaries_mmr.*
+%{_libdir}/ovis-ldms/libaries_mmr_configurable.*
 %{_libdir}/ovis-ldms/libaries_nic_mmr.*
 %{_libdir}/ovis-ldms/libaries_rtr_mmr.*
 %{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
