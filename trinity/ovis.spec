@@ -140,7 +140,6 @@ echo export LDMS_AUTH_FILE=%{_sysconfdir}/ldms/ldmsauth.conf >> %{_sysconfdir}/l
 /bin/rm -f /etc/ld.so.conf.d/ldms-ldd.conf
 echo %{_libdir} > %{_sysconfdir}/ldms/ldms-ldd.conf
 echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
-echo %{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ldms-ldd.conf
 /bin/ln -fs %{_sysconfdir}/ldms/ldms-ldd.conf /etc/ld.so.conf.d/ldms-ldd.conf
 /sbin/ldconfig
 
