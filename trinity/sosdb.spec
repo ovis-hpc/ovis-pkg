@@ -61,15 +61,14 @@ to efficiently manage structured data on persistent media.
 %setup -q
 
 %build
-%configure --enable-swig \
-		--enable-python \
-		--enable-etc \
-		--enable-doc \
-		--enable-doc-html \
-		--enable-doc-man \
-		--disable-rpath \
-		COMMIT_ID=%{_commit_id} \
-		CFLAGS="-g -O3"
+%configure \
+    --enable-python \
+    --enable-doc \
+    --enable-doc-html \
+    --enable-doc-man \
+    COMMIT_ID=%{_commit_id} \
+    CFLAGS="-g -O3"
+
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=NO_RUNPATH_PLEASE|g' libtool
@@ -87,7 +86,6 @@ rm -rf %{buildroot}
 %defattr(-,root,root)
 %{_bindir}/ods_dump
 %{_bindir}/sos_*
-%{_bindir}/lmq
 %{_bindir}/sos-db
 %{_bindir}/sos-import-csv
 %{_bindir}/sos-monitor

@@ -13,15 +13,15 @@
 # module unload PrgEnv-intel
 # module unload PrgEnv-gnu
 # module load PrgEnv-gnu
-# module load python/2.7-anaconda-4.1.1
+# module load python/3.6-anaconda-5.0.1
 # module unload perftools-base
 # module load papi
-LIBPAPI=/opt/cray/pe/papi/5.6.0.6
+LIBPAPI=/opt/cray/pe/papi/default
 ARIES_LIBGPCD=/opt/cray/gni/default/lib64,/opt/cray/gni/default/include/gpcd
 PLATFORM=Voltrino
 OVIS_SRC=$(dirname $PWD)/ovis
 
-CFLAGS='-g -O3'
+CFLAGS='-g -O0'
 
 # Exit immediately if a command failed
 set -e

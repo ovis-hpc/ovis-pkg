@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.3.4
+Version: 4.3.6
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
@@ -29,15 +29,12 @@ This package provides the LDMS commands and libraries.
 %build
 %configure --enable-etc \
 		--enable-munge \
-		--enable-swig \
 		--enable-ldms-python \
                 --enable-doc \
                 --enable-doc-html \
                 --enable-doc-man \
 		--enable-lustre \
-		--enable-jobinfo-slurm \
 		--enable-spank-plugin \
-		--enable-slurm-sampler \
 		--with-slurm=/opt/slurm \
 		--enable-ugni \
 		--enable-kgnilnd \
@@ -58,11 +55,10 @@ This package provides the LDMS commands and libraries.
 		--with-rca=%{_with_rca} \
 		--with-krca=%{_with_krca} \
 		--with-cray-hss-devel=%{_with_cray_hss_devel} \
-		--with-libpapi=%{_with_libpapi} \
-		--with-libpfm=%{_with_libpapi} \
-		--enable-syspapi-sampler \
-		--enable-papi-sampler \
-		CFLAGS="-g -O2"
+		--enable-papi \
+		--with-libpapi-prefix=%{_with_libpapi} \
+		--with-libpfm-prefix=%{_with_libpapi} \
+		CFLAGS="-g -O0"
 
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -93,29 +89,29 @@ rm -rf %{buildroot}
 %{_libdir}/libcoll*
 %{_libdir}/libovis_third*
 %{_libdir}/libmmalloc*
-%{_prefix}/lib*/python*/site-packages/ovis_ldms/*
 %{_libdir}/libovis_auth*
 %{_libdir}/libovis_ctrl*
 %{_libdir}/libovis_event*
 %{_libdir}/libovis_util*
-%{_libdir}/libjson_util*
+%{_libdir}/libovis_json*
 %{_libdir}/libzap.*
+%{_libdir}/libovis_ev.*
 %{_libdir}/ovis-ldms/libzap_sock.*
 %{_libdir}/ovis-ldms/libzap_ugni.*
 %{_libdir}/ovis-ldms/ovis-auth.sh
 %{_libdir}/ovis-lib-configvars.sh
-%{_sysconfdir}/
 %{_datadir}/doc/%{name}-%{version}/AUTHORS
 %config %{_sysconfdir}/ldms/*
-%config %{_sysconfdir}/systemd
+%config %{_sysconfdir}/systemd/*
+%config %{_sysconfdir}/profile.d/set-ovis-variables.sh
+%config %{_sysconfdir}/ld.so.conf.d/ovis-ld-so.conf
+%config %{_sysconfdir}/ovis/ovis-functions.sh
 %exclude %{_libdir}/ovis-ldms-configvars.sh
 %exclude %{_libdir}/ovis-ldms/libstore_flatfile.*
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
 %exclude %{_libdir}/ovis-ldms/libclock.*
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 %exclude %{_libdir}/ovis-ldms/libstore_none.*
-%exclude %{_sbindir}/json_test
-%exclude %{_prefix}/etc/ldms/aries_mmr_set_configs
 
 %posttrans
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
@@ -134,7 +130,7 @@ rm -rf %{buildroot}
 echo PATH=%{_bindir}:%{_sbindir}:\$PATH > %{_sysconfdir}/ldms/ovis.sh
 echo export LDMSD_PLUGIN_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
 echo export ZAP_LIBPATH=%{_libdir}/ovis-ldms >> %{_sysconfdir}/ldms/ovis.sh
-echo export PYTHONPATH=%{_prefix}/lib/python2.7/site-packages >> %{_sysconfdir}/ldms/ovis.sh
+echo export PYTHONPATH=%{_prefix}/lib/python3.6/site-packages >> %{_sysconfdir}/ldms/ovis.sh
 echo export LDMS_AUTH_FILE=%{_sysconfdir}/ldms/ldmsauth.conf >> %{_sysconfdir}/ldms/ovis.sh
 /bin/ln -fs %{_sysconfdir}/ldms/ovis.sh /etc/profile.d/ovis.sh
 /bin/rm -f %{_sysconfdir}/ldms/ldms-ldd.conf
@@ -182,6 +178,9 @@ Version: %{version}
 %{summary}
 %files samplers
 %defattr(-,root,root)
+%exclude %{_libdir}/ovis-ldms/libhweventpapi.*
+%exclude %{_libdir}/ovis-ldms/librapl.*
+%{_libdir}/ovis-ldms/libhello_sampler.*
 %{_libdir}/ovis-ldms/libgeneric_sampler.*
 %{_libdir}/ovis-ldms/liblustre2_*
 %{_libdir}/ovis-ldms/liblustre_*
@@ -205,7 +204,6 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libaries_nic_mmr.*
 %{_libdir}/ovis-ldms/libaries_rtr_mmr.*
 %{_libdir}/ovis-ldms/libcray_aries_r_sampler.*
-%{_prefix}/etc/ldms/aries_mmr_set_configs
 %{_libdir}/ovis-ldms/libcray_power_sampler.*
 %{_libdir}/ovis-ldms/libtsampler.*
 %{_libdir}/ovis-ldms/libtimer_base.*
@@ -232,6 +230,7 @@ Version: %{version}
 %files stores
 %defattr(-,root,root)
 %{_libdir}/libldms_store_csv_common.*
+%{_libdir}/ovis-ldms/libhello_stream_store.*
 %{_libdir}/ovis-ldms/libstore_csv.*
 %{_libdir}/ovis-ldms/libstore_function_csv.*
 %{_libdir}/ovis-ldms/libstore_sos.*
