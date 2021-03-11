@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.3.6
+Version: 4.3.7
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
