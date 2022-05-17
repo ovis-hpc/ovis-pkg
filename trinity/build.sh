@@ -18,6 +18,7 @@
 # module load papi
 LIBPAPI=/opt/cray/pe/papi/default
 ARIES_LIBGPCD=/opt/cray/gni/default/lib64,/opt/cray/gni/default/include/gpcd
+# ARIES_LIBGPCD=/opt/cray/gni/6.0.32.0-7.0.2.1_3.76__gb038015.ari/lib64,/opt/cray/gni/6.0.32.0-7.0.2.1_3.76__gb038015.ari/include/gpcd
 PLATFORM=Voltrino
 OVIS_SRC=$(dirname $PWD)/ovis
 

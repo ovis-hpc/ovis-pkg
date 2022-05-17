@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.3.7
+Version: 4.3.9
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
@@ -47,7 +47,9 @@ This package provides the LDMS commands and libraries.
 		--enable-aries_linkstatus \
 		--enable-sos \
 		--disable-dstat \
+		--enable-appinfo \
 		--enable-kokkos \
+		--enable-darshan \
 		--enable-influx \
 		--with-sos=%{_with_sos} \
 		--with-ovis-lib=%{_with_ovis_lib} \
@@ -87,6 +89,7 @@ rm -rf %{buildroot}
 %{_libdir}/ovis-ldms/ovis-ldms-configure-env
 %{_prefix}/lib*/python*
 %{_libdir}/libcoll*
+%{_libdir}/libsimple_lps*
 %{_libdir}/libovis_third*
 %{_libdir}/libmmalloc*
 %{_libdir}/libovis_auth*
@@ -100,7 +103,7 @@ rm -rf %{buildroot}
 %{_libdir}/ovis-ldms/libzap_ugni.*
 %{_libdir}/ovis-ldms/ovis-auth.sh
 %{_libdir}/ovis-lib-configvars.sh
-%{_datadir}/doc/%{name}-%{version}/AUTHORS
+# %{_datadir}/doc/%{name}-%{version}/AUTHORS
 %config %{_sysconfdir}/ldms/*
 %config %{_sysconfdir}/systemd/*
 %config %{_sysconfdir}/profile.d/set-ovis-variables.sh
@@ -112,6 +115,7 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/ovis-ldms/libclock.*
 %exclude %{_libdir}/ovis-ldms/libvariable.*
 %exclude %{_libdir}/ovis-ldms/libstore_none.*
+%exclude %{_libdir}/ovis-ldms/libblob_stream_writer.*
 
 %posttrans
 /bin/rm -f %{_systemdir}/ldmsd.sampler.service
@@ -190,8 +194,11 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libprocdiskstats.*
 %{_libdir}/ovis-ldms/libprocinterrupts.*
 %{_libdir}/ovis-ldms/libprocnetdev.*
+%{_libdir}/ovis-ldms/libprocnetdev2.*
+%{_libdir}/ovis-ldms/libprocnet.*
 %{_libdir}/ovis-ldms/libprocnfs.*
 %{_libdir}/ovis-ldms/libprocstat.*
+%{_libdir}/ovis-ldms/libprocstat2.*
 %{_libdir}/ovis-ldms/libsynthetic.*
 %{_libdir}/ovis-ldms/libvmstat.*
 %{_libdir}/ovis-ldms/liball_example.*
@@ -212,8 +219,11 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libslurm_sampler.*
 %{_libdir}/ovis-ldms/libslurm_notifier.*
 %{_libdir}/ovis-ldms/libpapi_sampler.*
+%{_libdir}/ovis-ldms/libpapi_hook.*
 %{_libdir}/ovis-ldms/libsyspapi_sampler.*
 %{_libdir}/ovis-ldms/libloadavg.*
+%{_libdir}/ovis-ldms/libappinfo.*
+%{_libdir}/ovis-ldms/libappinfocl.*
 
 #################
 # store plugins #
@@ -230,14 +240,16 @@ Version: %{version}
 %files stores
 %defattr(-,root,root)
 %{_libdir}/libldms_store_csv_common.*
-%{_libdir}/ovis-ldms/libhello_stream_store.*
+%{_libdir}/ovis-ldms/libstream_csv_store.*
 %{_libdir}/ovis-ldms/libstore_csv.*
 %{_libdir}/ovis-ldms/libstore_function_csv.*
 %{_libdir}/ovis-ldms/libstore_sos.*
 %{_libdir}/ovis-ldms/libkokkos_store.*
+%{_libdir}/ovis-ldms/libkokkos_appmon_store.*
 %{_libdir}/ovis-ldms/libstore_influx.*
 %{_libdir}/ovis-ldms/libstore_papi.*
 %{_libdir}/ovis-ldms/libstore_slurm.*
+%{_libdir}/ovis-ldms/libdarshan_stream_store.*
 
 %package plugin-devel
 Summary: Development files for LDMS plugins

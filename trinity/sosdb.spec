@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 4.3.4
+Version: 5.1.1
 Obsoletes: sosdb < %{version}
 Release: 1%{?dist}
 Summary: Scalable Object Storage
@@ -67,7 +67,7 @@ to efficiently manage structured data on persistent media.
     --enable-doc-html \
     --enable-doc-man \
     COMMIT_ID=%{_commit_id} \
-    CFLAGS="-g -O3"
+    CFLAGS="-g -O3 -fPIC"
 
 # disable rpath when librool re-link
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -91,14 +91,25 @@ rm -rf %{buildroot}
 %{_bindir}/sos-monitor
 %{_bindir}/sos-part
 %{_bindir}/sos-schema
+%{_bindir}/dsosql
+%{_bindir}/dsosd
+%{_bindir}/rpcgen
 %{_libdir}/libidx_*
 %{_libdir}/libkey_*
 %{_libdir}/libods.*
 %{_libdir}/libsos.*
+%{_libdir}/libdsos.*
+%{_libdir}/libsos_json.*
 %{_libdir}/sos-configvars.sh
+%{_libdir}/libtirpc.*
 %{_prefix}/lib*/python*/site-packages/sosdb/
 %{_includedir}/ods/
 %{_includedir}/sos/
+%{_includedir}/dsos.h
+%exclude %{_includedir}/tirpc
+%exclude /etc/bindresvport.blacklist
+%exclude /etc/netconfig
+%exclude %{_libdir}/pkgconfig/libtirpc.pc
 
 # sosdb-doc package
 %package doc
