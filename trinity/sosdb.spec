@@ -39,7 +39,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Name: sosdb
-Version: 5.1.1
+Version: 6.4.4
 Obsoletes: sosdb < %{version}
 Release: 1%{?dist}
 Summary: Scalable Object Storage
@@ -90,6 +90,7 @@ rm -rf %{buildroot}
 %{_bindir}/sos-import-csv
 %{_bindir}/sos-monitor
 %{_bindir}/sos-part
+%{_bindir}/sos-index
 %{_bindir}/sos-schema
 %{_bindir}/dsosql
 %{_bindir}/dsosd
@@ -99,9 +100,9 @@ rm -rf %{buildroot}
 %{_libdir}/libods.*
 %{_libdir}/libsos.*
 %{_libdir}/libdsos.*
-%{_libdir}/libsos_json.*
+# %{_libdir}/libsos_json.*
 %{_libdir}/sos-configvars.sh
-%{_libdir}/libtirpc.*
+%{_libdir}/libdsosrpc.*
 %{_prefix}/lib*/python*/site-packages/sosdb/
 %{_includedir}/ods/
 %{_includedir}/sos/
@@ -109,7 +110,7 @@ rm -rf %{buildroot}
 %exclude %{_includedir}/tirpc
 %exclude /etc/bindresvport.blacklist
 %exclude /etc/netconfig
-%exclude %{_libdir}/pkgconfig/libtirpc.pc
+%exclude %{_libdir}/pkgconfig/libdsosrpc.pc
 
 # sosdb-doc package
 %package doc

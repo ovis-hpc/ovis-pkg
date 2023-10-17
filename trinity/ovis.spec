@@ -1,5 +1,5 @@
 Name: ovis-ldms
-Version: 4.3.9
+Version: 4.4.1
 Obsoletes: ovis-ldms < %{version}
 Release: 1%{?dist}
 Summary: LDMS - Lighweight Distributed Metric Service
@@ -101,14 +101,15 @@ rm -rf %{buildroot}
 %{_libdir}/libovis_ev.*
 %{_libdir}/ovis-ldms/libzap_sock.*
 %{_libdir}/ovis-ldms/libzap_ugni.*
-%{_libdir}/ovis-ldms/ovis-auth.sh
+%{_libdir}/libovis_log.*
+# %{_libdir}/ovis-ldms/ovis-auth.sh
 %{_libdir}/ovis-lib-configvars.sh
 # %{_datadir}/doc/%{name}-%{version}/AUTHORS
-%config %{_sysconfdir}/ldms/*
-%config %{_sysconfdir}/systemd/*
+# %config %{_sysconfdir}/ldms/*
+# %config %{_sysconfdir}/systemd/*
 %config %{_sysconfdir}/profile.d/set-ovis-variables.sh
 %config %{_sysconfdir}/ld.so.conf.d/ovis-ld-so.conf
-%config %{_sysconfdir}/ovis/ovis-functions.sh
+# %config %{_sysconfdir}/ovis/ovis-functions.sh
 %exclude %{_libdir}/ovis-ldms-configvars.sh
 %exclude %{_libdir}/ovis-ldms/libstore_flatfile.*
 %exclude %{_libdir}/ovis-ldms/libarray_example.*
@@ -217,6 +218,7 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libhfclock.*
 %{_libdir}/ovis-ldms/libkgnilnd.*
 %{_libdir}/ovis-ldms/libslurm_sampler.*
+%{_libdir}/ovis-ldms/libslurm_sampler2.*
 %{_libdir}/ovis-ldms/libslurm_notifier.*
 %{_libdir}/ovis-ldms/libpapi_sampler.*
 %{_libdir}/ovis-ldms/libpapi_hook.*
@@ -224,6 +226,9 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libloadavg.*
 %{_libdir}/ovis-ldms/libappinfo.*
 %{_libdir}/ovis-ldms/libappinfocl.*
+%{_libdir}/ovis-ldms/liblinux_proc_sampler.*
+%{_libdir}/ovis-ldms/libcoretemp.*
+%{_libdir}/ovis-ldms/libapp_sampler.*
 
 #################
 # store plugins #
@@ -250,6 +255,7 @@ Version: %{version}
 %{_libdir}/ovis-ldms/libstore_papi.*
 %{_libdir}/ovis-ldms/libstore_slurm.*
 %{_libdir}/ovis-ldms/libdarshan_stream_store.*
+%{_libdir}/ovis-ldms/libdecomp_*.*
 
 %package plugin-devel
 Summary: Development files for LDMS plugins
